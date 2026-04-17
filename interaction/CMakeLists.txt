@@ -17,8 +17,8 @@ SET(
 )
 
 SOURCE_GROUP(Sources FILES ${sources})
-QT4_AUTOMOC(${sources})
 
 ADD_LIBRARY(interaction STATIC ${sources})
+target_link_libraries(interaction PUBLIC Qt5::Widgets Qt5::Gui Qt5::Core)
 
 TRANSLATION_SOURCES(scantailor ${sources})

@@ -17,3 +17,4 @@ SET(
 SOURCE_GROUP("Sources" FILES ${sources})
 
 ADD_LIBRARY(dewarping STATIC ${sources})
+target_link_libraries(dewarping PUBLIC Qt5::Gui Qt5::Xml Qt5::Core)

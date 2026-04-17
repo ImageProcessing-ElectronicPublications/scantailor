@@ -17,13 +17,14 @@
 */
 
 #include "ChangeDewarpingDialog.h"
-#include "ChangeDewarpingDialog.h.moc"
+#include "ChangeDewarpingDialog.moc"
 #include "PageSelectionAccessor.h"
 #include "QtSignalForwarder.h"
 #ifndef Q_MOC_RUN
 #include <boost/function.hpp>
 #include <boost/lambda/lambda.hpp>
 #endif
+#include <QButtonGroup>
 
 namespace output
 {

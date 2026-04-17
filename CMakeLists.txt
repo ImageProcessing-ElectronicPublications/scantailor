@@ -1,13 +1,9 @@
-IF(WIN32)
-	CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
-ELSE()
-	CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
-ENDIF()
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
 
 IF(COMMAND cmake_policy)
-	# Suppress warnings.
 	cmake_policy(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
+	cmake_policy(SET CMP0167 OLD)
+ENDIF()
 
 SET(
 	CMAKE_USER_MAKE_RULES_OVERRIDE
@@ -18,7 +14,14 @@ SET(
 	"${CMAKE_SOURCE_DIR}/cmake/default_cxxflags.cmake"
 )
 
-PROJECT("Scan Tailor")
+PROJECT("Scan Tailor" LANGUAGES C CXX)
+
+if(APPLE)
+	list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew" "/usr/local")
+endif()
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # This forces Visual Studio 2008 SP1 to actually link to the versions of the
 # libraries it ships with!  It's harmless on other platforms.
@@ -102,41 +105,29 @@ IF(WIN32)
 		)
 	ENDIF()
 	SET(STAGING_LIBS_DIR "${DEPS_BUILD_DIR}/staging/libs")
-	
-	IF (NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
-		FILE(GLOB qt_dirs1 "${build_outer_dir}/qt-win-*-4.[0-9]*")
-		FILE(GLOB qt_dirs2 "${build_outer_dir}/qt-everywhere-*-4.[0-9]*")
-		FILE(GLOB qt_dirs3 "${source_outer_dir}/qt-win-*-4.[0-9]*")
-		FILE(GLOB qt_dirs4 "${source_outer_dir}/qt-everywhere-*-4.[0-9]*")
-		FILE(GLOB qt_dirs5 "C:/Qt/4.*.*")
-		FILE(GLOB qt_dirs6 "C:/Qt/20*/qt")
-		FIND_PROGRAM(
-			QT_QMAKE_EXECUTABLE qmake
-			PATHS dummy_dir ${qt_dirs1} ${qt_dirs2} ${qt_dirs3}
-			${qt_dirs4} ${qt_dirs5} ${qt_dirs6}
-			PATH_SUFFIXES bin
-		)
-	ENDIF()
 ENDIF()
 
-INCLUDE(FindQt4)
-IF(NOT QT4_FOUND)
-	MESSAGE(
-		FATAL_ERROR "Qt4 could not be found. "
-		"If it's installed in a non-standard location, specify the path to qmake in QT_QMAKE_EXECUTABLE. "
-		"You can do it in interactive mode (ccmake instead of cmake) or using -DVAR=VAL syntax."
-	)
-ENDIF(NOT QT4_FOUND)
-GET_FILENAME_COMPONENT(QT_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
+set(CMAKE_AUTOMOC ON)
 
+find_package(Qt5 REQUIRED COMPONENTS Widgets Xml Network LinguistTools)
 
-INCLUDE(FindOpenGL)
-SET(use_opengl OFF)
-IF(OPENGL_FOUND AND QT_QTOPENGL_FOUND)
-	# Disabled for now due to various problems associated with it.
-	# SET(use_opengl ON)
+get_filename_component(_qt5_install_prefix "${Qt5_DIR}/../../.." ABSOLUTE)
+if(TARGET Qt5::lupdate)
+	get_target_property(QT_LUPDATE_EXECUTABLE Qt5::lupdate IMPORTED_LOCATION)
+endif()
+if(NOT QT_LUPDATE_EXECUTABLE)
+	find_program(QT_LUPDATE_EXECUTABLE NAMES lupdate lupdate-qt5 HINTS "${_qt5_install_prefix}/bin")
+endif()
+
+get_filename_component(QT_BIN_DIR "${_qt5_install_prefix}/bin" ABSOLUTE)
+
+SET(ST_EXTRA_QT_LIBS "")
+OPTION(ENABLE_OPENGL "OpenGL may be used for UI acceleration" OFF)
+IF(ENABLE_OPENGL)
+	find_package(Qt5 REQUIRED COMPONENTS OpenGL)
+	find_package(OpenGL REQUIRED)
+	LIST(APPEND ST_EXTRA_QT_LIBS Qt5::OpenGL ${OPENGL_LIBRARIES})
 ENDIF()
-OPTION(ENABLE_OPENGL "OpenGL may be used for UI acceleration" ${use_opengl})
 
 
 FILE(GLOB jpeg_dirs1 "${build_outer_dir}/jpeg-[0-9]*")
@@ -306,7 +297,7 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 SET(EXTRA_LIBS "")
 
-IF(UNIX)
+IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	# We need to manually use XRender.
 	INCLUDE(FindX11)
 	IF(NOT X11_Xrender_FOUND)
@@ -320,24 +311,26 @@ IF(UNIX)
 
 	INCLUDE_DIRECTORIES("${X11_Xrender_INCLUDE_PATH}")
 	LIST(APPEND EXTRA_LIBS ${X11_Xrender_LIB})
+ENDIF()
 
+IF(UNIX AND NOT WIN32)
 	FindPthreads()
 	IF(PTHREADS_FOUND)
 		ADD_DEFINITIONS(${PTHREADS_CFLAGS})
 		LINK_LIBRARIES(${PTHREADS_LIBS})
-	ELSE(PTHREADS_FOUND)
+	ELSE()
 		MESSAGE(
 			FATAL_ERROR
 			"Could not detect threading flags.\n"
 			"Try specifying them manually in PTHREADS_CFLAGS and PTHREADS_LIBS."
 		)
-	ENDIF(PTHREADS_FOUND)
+	ENDIF()
 ELSEIF(MINGW)
 	ADD_DEFINITIONS(-mthreads)
 	LINK_LIBRARIES(-mthreads)
 ELSEIF(WIN32)
 	ADD_DEFINITIONS(-DNOMINMAX)
-ENDIF(UNIX)
+ENDIF()
 
 CHECK_INCLUDE_FILE(stdint.h HAVE_STDINT_H)
 IF(NOT HAVE_STDINT_H)
@@ -348,13 +341,10 @@ ELSE(NOT HAVE_STDINT_H)
 ENDIF(NOT HAVE_STDINT_H)
 
 ADD_DEFINITIONS(
-	${QT_DEFINITIONS} -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION
+	-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION
 )
 
-INCLUDE_DIRECTORIES(${QT_INCLUDES})
-LINK_DIRECTORIES(${QT_LIBRARY_DIR})
-
-#SET(QJPEG_LIBRARIES "")
+SET(QJPEG_LIBRARIES "")
 IF(WIN32)
 #	FIND_LIBRARY(QJPEG_RELEASE qjpeg PATHS "${QT_PLUGINS_DIR}/imageformats")
 #	FIND_LIBRARY(QJPEG_DEBUG qjpegd PATHS "${QT_PLUGINS_DIR}/imageformats")
@@ -369,7 +359,7 @@ IF(WIN32)
 #	SET(QJPEG_LIBRARIES "debug;${QJPEG_DEBUG};optimized;${QJPEG_RELEASE}")
 #
 	LIST(
-		APPEND EXTRA_LIBS "${QT_QTMAIN_LIBRARY}"
+		APPEND EXTRA_LIBS
 		winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool
 	)
 ENDIF()
@@ -377,10 +367,6 @@ ENDIF()
 # Note that ${JPEG_LIBRARY} must go after qjpeg plugin, because otherwise
 # the GNU linker won't resolve symbols qjpeg needs from it.
 LIST(APPEND EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
-
-IF(ENABLE_OPENGL)
-	LIST(APPEND EXTRA_LIBS ${QT_QTOPENGL_LIBRARY} ${OPENGL_LIBRARIES})
-ENDIF()
 
 # Crash reporter, only Windows + MSVC supported for now.
 # Must go before generating config.h, as ENABLE_CRASH_REPORTER
@@ -416,8 +402,8 @@ FOREACH(ui_file ${common_ui_files})
 ENDFOREACH()
 
 SOURCE_GROUP("UI Files" FILES ${common_ui_files} ${gui_only_ui_files})
-QT4_WRAP_UI(common_ui_sources ${common_ui_files})
-QT4_WRAP_UI(gui_only_ui_sources ${gui_only_ui_files})
+qt5_wrap_ui(common_ui_sources ${common_ui_files})
+qt5_wrap_ui(gui_only_ui_sources ${gui_only_ui_files})
 SET_SOURCE_FILES_PROPERTIES(${common_ui_sources} ${gui_only_ui_files} PROPERTIES GENERATED TRUE)
 ADD_SUBDIRECTORY(ui)
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}") # for ui files
@@ -432,7 +418,7 @@ ADD_SUBDIRECTORY(filters/page_layout)
 ADD_SUBDIRECTORY(filters/output)
 
 SET(resource_sources)
-QT4_ADD_RESOURCES(resource_sources resources/resources.qrc)
+qt5_add_resources(resource_sources resources/resources.qrc)
 SOURCE_GROUP("Generated" FILES ${common_ui_sources} ${gui_only_ui_sources} ${resource_sources})
 SOURCE_GROUP("Resources" FILES resources/resources.qrc resources/icons/COPYING)
 IF(WIN32)
@@ -466,6 +452,7 @@ SET(
 	ImageViewBase.cpp ImageViewBase.h
 	BasicImageView.cpp BasicImageView.h
 	StageListView.cpp StageListView.h
+	SkinnedButton.cpp SkinnedButton.h
 	DebugImageView.cpp DebugImageView.h
 	TabbedDebugImages.cpp TabbedDebugImages.h
 	ThumbnailLoadResult.h
@@ -535,7 +522,6 @@ SET(
 SET(
 	gui_only_sources
 	Application.cpp Application.h
-	SkinnedButton.cpp SkinnedButton.h
 	RelinkablePathVisualization.cpp RelinkablePathVisualization.h
 	RelinkingModel.cpp RelinkingModel.h
 	RelinkingSortingModel.cpp RelinkingSortingModel.h
@@ -562,8 +548,6 @@ SET(
 )
 
 SOURCE_GROUP("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
-QT4_AUTOMOC(${common_sources} ${gui_only_sources} ${cli_only_sources})
-
 SOURCE_GROUP("Special Headers" FILES version.h config.h.in)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -601,6 +585,7 @@ IF(WIN32)
 ENDIF(WIN32)
 
 ADD_LIBRARY(stcore STATIC ${common_sources} ${common_ui_sources})
+target_link_libraries(stcore PUBLIC Qt5::Widgets Qt5::Xml Qt5::Gui Qt5::Core)
 
 ADD_EXECUTABLE(
 	scantailor WIN32 ${gui_only_sources} ${common_ui_sources} ${gui_only_ui_sources}
@@ -615,14 +600,16 @@ ADD_EXECUTABLE(scantailor-cli ${cli_only_sources} ${common_ui_sources})
 TARGET_LINK_LIBRARIES(
 	scantailor
 	fix_orientation page_split deskew select_content page_layout output stcore
-	dewarping zones interaction imageproc math foundation ${QJPEG_LIBRARIES}
-	${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+	dewarping zones interaction imageproc math foundation
+	Qt5::Widgets Qt5::Xml Qt5::Gui Qt5::Core
+	${ST_EXTRA_QT_LIBS} ${QJPEG_LIBRARIES} ${EXTRA_LIBS}
 )
 TARGET_LINK_LIBRARIES(
 	scantailor-cli
 	fix_orientation page_split deskew select_content page_layout output
-	stcore dewarping zones interaction imageproc math foundation ${QJPEG_LIBRARIES}
-	${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTCORE_LIBRARY} ${EXTRA_LIBS}
+	stcore dewarping zones interaction imageproc math foundation
+	Qt5::Widgets Qt5::Xml Qt5::Gui Qt5::Core
+	${ST_EXTRA_QT_LIBS} ${QJPEG_LIBRARIES} ${EXTRA_LIBS}
 )
 INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
 
@@ -680,7 +667,7 @@ FOREACH(ts_file ${ts_files})
 		LIST(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
 	ENDIF("${ts_file}" MATCHES ".*untranslated.ts")
 ENDFOREACH(ts_file)
-QT4_ADD_TRANSLATION(QM_FILES ${FILTERED_TRANSLATION_FILES})
+qt5_add_translation(QM_FILES ${FILTERED_TRANSLATION_FILES})
 ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
 
 INSTALL(FILES ${QM_FILES} DESTINATION "${TRANSLATIONS_DIR_REL}/")
@@ -743,43 +730,20 @@ IF(WIN32)
 		ENDIF(NOT MINGW64)
 	ENDIF(MINGW)
 	
-	SET(
-		libs_copy_debug
-		"${QT_QTCORE_LIBRARY_DEBUG}"
-		"${QT_QTGUI_LIBRARY_DEBUG}"
-		"${QT_QTXML_LIBRARY_DEBUG}"
-		"${QT_QTNETWORK_LIBRARY_DEBUG}"
-	)
-	LIB_TO_DLL(libs_copy_debug ${libs_copy_debug})
-	COPY_TO_BUILD_DIR(${libs_copy_debug} CONFIGURATIONS Debug)
+# Qt 5: deploy runtime libraries and plugins next to the GUI executable.
+	if(TARGET Qt5::qmake)
+		get_target_property(_qmake_loc Qt5::qmake IMPORTED_LOCATION)
+		get_filename_component(QT_BIN_DIR "${_qmake_loc}" DIRECTORY)
+	endif()
+	find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
+	if(WINDEPLOYQT_EXECUTABLE)
+		add_custom_command(TARGET scantailor POST_BUILD
+			COMMAND "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:scantailor>"
+				--no-translations --no-system-d3d-compiler
+			VERBATIM)
+	endif()
 	
-	SET(
-		libs_copy_nondebug
-		"${QT_QTCORE_LIBRARY_RELEASE}"
-		"${QT_QTGUI_LIBRARY_RELEASE}"
-		"${QT_QTXML_LIBRARY_RELEASE}"
-		"${QT_QTNETWORK_LIBRARY_RELEASE}"
-	)
-	LIB_TO_DLL(libs_copy_nondebug ${libs_copy_nondebug})
-	COPY_TO_BUILD_DIR(${libs_copy_nondebug} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	
-	# Qt's imageformat plugins. Note that png is built-in and for tiff we have our own code.
-	COPY_TO_BUILD_DIR("${QT_QJPEG_PLUGIN_RELEASE}" SUBDIR imageformats CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-	COPY_TO_BUILD_DIR("${QT_QJPEG_PLUGIN_DEBUG}" SUBDIR imageformats CONFIGURATIONS Debug)
-	
-	IF(MINGW)
-		SET(zlib_dll "${QT_BIN_DIR}/libz.dll")
-	ELSE()
-		SET(zlib_dll "${QT_BIN_DIR}/zdll.dll")
-	ENDIF()
-	SET(
-		libs_copy_all_confs
-		"${QT_BIN_DIR}/libpng.dll" "${QT_BIN_DIR}/libjpeg.dll"
-		"${QT_BIN_DIR}/libtiff.dll" "${zlib_dll}"
-	)
-	COPY_TO_BUILD_DIR(${libs_copy_all_confs})
-	
-	# Generate the target that will actually do the copying.
+	# Generate the target that will actually do the copying (e.g. MinGW support DLLs above).
 	GENERATE_COPY_TO_BUILD_DIR_TARGET(copy_to_build_dir)
 	
 	# Installer for Windows.  Must go the last.

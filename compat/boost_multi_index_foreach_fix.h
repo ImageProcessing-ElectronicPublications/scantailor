@@ -19,16 +19,15 @@
 #ifndef BOOST_MULTI_INDEX_FOREACH_FIX_H_
 #define BOOST_MULTI_INDEX_FOREACH_FIX_H_
 
+#include <boost/version.hpp>
 #include <boost/foreach.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 
-// BOOST_FOREACH() in boost >= 1.47 has problems with gcc >= 4.6
-// These problems aren't specific to boost::multi_index,
-// but the code below only deals with it.
-// In future versions of boost, they might include equivalent
-// code in boost::multi_index itself, which will lead to build problems.
-// If / when this happens, conditional compilation will be necessary.
+// BOOST_FOREACH() in boost >= 1.47 had problems with gcc >= 4.6.
+// Newer Boost ships an equivalent is_noncopyable specialization; defining
+// it again causes a redefinition error (e.g. Boost 1.88 + libc++).
+#if BOOST_VERSION < 107200
 
 namespace boost 
 {
@@ -42,5 +41,7 @@ struct is_noncopyable<boost::multi_index::detail::sequenced_index<SuperMeta, Tag
 
 } // namespace foreach
 } // namespace boost
+
+#endif // BOOST_VERSION < 107200
 
 #endif
