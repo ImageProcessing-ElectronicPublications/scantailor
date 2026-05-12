@@ -29,21 +29,25 @@
 class PageOrientationPropagator::Collector : public PageOrientationCollector
 {
 public:
-	virtual void process(OrthogonalRotation const& orientation) {
-		m_orientation = orientation;
-	}
-	
-	OrthogonalRotation const& orientation() const { return m_orientation; }
+    virtual void process(OrthogonalRotation const& orientation)
+    {
+        m_orientation = orientation;
+    }
+
+    OrthogonalRotation const& orientation() const
+    {
+        return m_orientation;
+    }
 private:
-	OrthogonalRotation m_orientation;
+    OrthogonalRotation m_orientation;
 };
 
 
 PageOrientationPropagator::PageOrientationPropagator(
-	IntrusivePtr<page_split::Filter> const& page_split_filter,
-	IntrusivePtr<CompositeCacheDrivenTask> const& task)
-:	m_ptrPageSplitFilter(page_split_filter),
-	m_ptrTask(task)
+    IntrusivePtr<page_split::Filter> const& page_split_filter,
+    IntrusivePtr<CompositeCacheDrivenTask> const& task)
+    :	m_ptrPageSplitFilter(page_split_filter),
+      m_ptrTask(task)
 {
 }
 
@@ -54,15 +58,16 @@ PageOrientationPropagator::~PageOrientationPropagator()
 void
 PageOrientationPropagator::propagate(ProjectPages const& pages)
 {
-	PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
-	size_t const num_pages = sequence.numPages();
-	
-	for (size_t i = 0; i < num_pages; ++i) {
-		PageInfo const& page_info = sequence.pageAt(i);
-		Collector collector;
-		m_ptrTask->process(page_info, &collector);
-		m_ptrPageSplitFilter->pageOrientationUpdate(
-			page_info.imageId(), collector.orientation()
-		);
-	}
+    PageSequence const sequence(pages.toPageSequence(PAGE_VIEW));
+    size_t const num_pages = sequence.numPages();
+
+    for (size_t i = 0; i < num_pages; ++i)
+    {
+        PageInfo const& page_info = sequence.pageAt(i);
+        Collector collector;
+        m_ptrTask->process(page_info, &collector);
+        m_ptrPageSplitFilter->pageOrientationUpdate(
+            page_info.imageId(), collector.orientation()
+        );
+    }
 }

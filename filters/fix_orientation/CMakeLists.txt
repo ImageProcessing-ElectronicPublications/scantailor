@@ -9,14 +9,14 @@ SOURCE_GROUP("UI Files" FILES ${ui_files})
 SOURCE_GROUP("Generated" FILES ${ui_sources})
 
 SET(
-	sources
-	ImageView.cpp ImageView.h
-	Filter.cpp Filter.h
-	OptionsWidget.cpp OptionsWidget.h
-	ApplyDialog.cpp ApplyDialog.h
-	Settings.cpp Settings.h
-	Task.cpp Task.h
-	CacheDrivenTask.cpp CacheDrivenTask.h
+    sources
+    ImageView.cpp ImageView.h
+    Filter.cpp Filter.h
+    OptionsWidget.cpp OptionsWidget.h
+    ApplyDialog.cpp ApplyDialog.h
+    Settings.cpp Settings.h
+    Task.cpp Task.h
+    CacheDrivenTask.cpp CacheDrivenTask.h
 )
 SOURCE_GROUP("Sources" FILES ${sources})
 ADD_LIBRARY(fix_orientation STATIC ${sources} ${ui_sources})

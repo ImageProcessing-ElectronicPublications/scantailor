@@ -28,30 +28,34 @@ bool
 OpenGLSupport::supported()
 {
 #ifndef ENABLE_OPENGL
-	return false;
+    return false;
 #else
-	if (!QGLFormat::hasOpenGL()) {
-		return false;
-	}
+    if (!QGLFormat::hasOpenGL())
+    {
+        return false;
+    }
 
-	QGLFormat format;
-	format.setSampleBuffers(true);
-	format.setStencil(true);
-	format.setAlpha(true);
+    QGLFormat format;
+    format.setSampleBuffers(true);
+    format.setStencil(true);
+    format.setAlpha(true);
 
-	QGLWidget widget(format);
-	format = widget.format();
+    QGLWidget widget(format);
+    format = widget.format();
 
-	if (!format.sampleBuffers()) {
-		return false;
-	}
-	if (!format.stencil()) {
-		return false;
-	}
-	if (!format.alpha()) {
-		return false;
-	}
+    if (!format.sampleBuffers())
+    {
+        return false;
+    }
+    if (!format.stencil())
+    {
+        return false;
+    }
+    if (!format.alpha())
+    {
+        return false;
+    }
 
-	return true;
+    return true;
 #endif
 }

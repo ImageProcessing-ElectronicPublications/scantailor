@@ -33,25 +33,25 @@
  */
 class QtSignalForwarder : public QObject
 {
-	Q_OBJECT
-	DECLARE_NON_COPYABLE(QtSignalForwarder)
+    Q_OBJECT
+    DECLARE_NON_COPYABLE(QtSignalForwarder)
 public:
-	/**
-	 * \brief Constructor.
-	 *
-	 * \param emitter The object that will emit a signal.  The forwarder
-	 *        will become its child.
-	 * \param signal The signal specification in the form of SIGNAL(name()).
-	 *        Signals with arguments may be specified, but the arguments
-	 *        won't be forwarded.
-	 * \param slot A boost::function to forward the signal to.
-	 */
-	QtSignalForwarder(
-		QObject* emitter, char const* signal, boost::function<void()> const& slot);
+    /**
+     * \brief Constructor.
+     *
+     * \param emitter The object that will emit a signal.  The forwarder
+     *        will become its child.
+     * \param signal The signal specification in the form of SIGNAL(name()).
+     *        Signals with arguments may be specified, but the arguments
+     *        won't be forwarded.
+     * \param slot A boost::function to forward the signal to.
+     */
+    QtSignalForwarder(
+        QObject* emitter, char const* signal, boost::function<void()> const& slot);
 private slots:
-	void handleSignal();
+    void handleSignal();
 private:
-	boost::function<void()> m_slot;
+    boost::function<void()> m_slot;
 };
 
 #endif

@@ -34,7 +34,7 @@
 
 namespace dewarping
 {
-	class DistortionModel;
+class DistortionModel;
 }
 
 namespace output
@@ -44,95 +44,101 @@ class Settings;
 class DewarpingParams;
 
 class OptionsWidget
-	: public FilterOptionsWidget, private Ui::OutputOptionsWidget
+    : public FilterOptionsWidget, private Ui::OutputOptionsWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	OptionsWidget(IntrusivePtr<Settings> const& settings,
-		PageSelectionAccessor const& page_selection_accessor);
-	
-	virtual ~OptionsWidget();
-	
-	void preUpdateUI(PageId const& page_id);
-	
-	void postUpdateUI();
+    OptionsWidget(IntrusivePtr<Settings> const& settings,
+                  PageSelectionAccessor const& page_selection_accessor);
 
-	ImageViewTab lastTab() const { return m_lastTab; }
+    virtual ~OptionsWidget();
 
-	DepthPerception const& depthPerception() const { return m_depthPerception; }
+    void preUpdateUI(PageId const& page_id);
+
+    void postUpdateUI();
+
+    ImageViewTab lastTab() const
+    {
+        return m_lastTab;
+    }
+
+    DepthPerception const& depthPerception() const
+    {
+        return m_depthPerception;
+    }
 signals:
-	void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
 
-	void depthPerceptionChanged(double val);
+    void depthPerceptionChanged(double val);
 public slots:
-	void tabChanged(ImageViewTab tab);
+    void tabChanged(ImageViewTab tab);
 
-	void distortionModelChanged(dewarping::DistortionModel const& model);
+    void distortionModelChanged(dewarping::DistortionModel const& model);
 private slots:
-	void changeDpiButtonClicked();
-	
-	void applyColorsButtonClicked();
-	
-	void dpiChanged(std::set<PageId> const& pages, Dpi const& dpi);
+    void changeDpiButtonClicked();
 
-	void applyColorsConfirmed(std::set<PageId> const& pages);
+    void applyColorsButtonClicked();
 
-	void colorModeChanged(int idx);
-	
-	void whiteMarginsToggled(bool checked);
-	
-	void equalizeIlluminationToggled(bool checked);
-	
-	void setLighterThreshold();
-	
-	void setDarkerThreshold();
-	
-	void setNeutralThreshold();
-	
-	void bwThresholdChanged();
+    void dpiChanged(std::set<PageId> const& pages, Dpi const& dpi);
 
-	void despeckleOffSelected();
+    void applyColorsConfirmed(std::set<PageId> const& pages);
 
-	void despeckleCautiousSelected();
+    void colorModeChanged(int idx);
 
-	void despeckleNormalSelected();
+    void whiteMarginsToggled(bool checked);
 
-	void despeckleAggressiveSelected();
+    void equalizeIlluminationToggled(bool checked);
 
-	void applyDespeckleButtonClicked();
+    void setLighterThreshold();
 
-	void applyDespeckleConfirmed(std::set<PageId> const& pages);
+    void setDarkerThreshold();
 
-	void changeDewarpingButtonClicked();
+    void setNeutralThreshold();
 
-	void dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode);
+    void bwThresholdChanged();
 
-	void applyDepthPerceptionButtonClicked();
+    void despeckleOffSelected();
 
-	void applyDepthPerceptionConfirmed(std::set<PageId> const& pages);
+    void despeckleCautiousSelected();
 
-	void depthPerceptionChangedSlot(int val);
+    void despeckleNormalSelected();
+
+    void despeckleAggressiveSelected();
+
+    void applyDespeckleButtonClicked();
+
+    void applyDespeckleConfirmed(std::set<PageId> const& pages);
+
+    void changeDewarpingButtonClicked();
+
+    void dewarpingChanged(std::set<PageId> const& pages, DewarpingMode const& mode);
+
+    void applyDepthPerceptionButtonClicked();
+
+    void applyDepthPerceptionConfirmed(std::set<PageId> const& pages);
+
+    void depthPerceptionChangedSlot(int val);
 private:
-	void handleDespeckleLevelChange(DespeckleLevel level);
+    void handleDespeckleLevelChange(DespeckleLevel level);
 
-	void reloadIfNecessary();
+    void reloadIfNecessary();
 
-	void updateDpiDisplay();
+    void updateDpiDisplay();
 
-	void updateColorsDisplay();
+    void updateColorsDisplay();
 
-	void updateDewarpingDisplay();
-	
-	IntrusivePtr<Settings> m_ptrSettings;
-	PageSelectionAccessor m_pageSelectionAccessor;
-	PageId m_pageId;
-	Dpi m_outputDpi;
-	ColorParams m_colorParams;
-	DepthPerception m_depthPerception;
-	DewarpingMode m_dewarpingMode;
-	DespeckleLevel m_despeckleLevel;
-	ImageViewTab m_lastTab;
-	int m_ignoreThresholdChanges;
+    void updateDewarpingDisplay();
+
+    IntrusivePtr<Settings> m_ptrSettings;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    PageId m_pageId;
+    Dpi m_outputDpi;
+    ColorParams m_colorParams;
+    DepthPerception m_depthPerception;
+    DewarpingMode m_dewarpingMode;
+    DespeckleLevel m_despeckleLevel;
+    ImageViewTab m_lastTab;
+    int m_ignoreThresholdChanges;
 };
 
 } // namespace output

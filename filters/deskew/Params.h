@@ -32,26 +32,35 @@ namespace deskew
 class Params
 {
 public:
-	// Member-wise copying is OK.
-	
-	Params(double deskew_angle_deg,
-		Dependencies const& deps, AutoManualMode mode);
-	
-	Params(QDomElement const& deskew_el);
-	
-	~Params();
-	
-	double deskewAngle() const { return m_deskewAngleDeg; }
-	
-	Dependencies const& dependencies() const { return m_deps; }
-	
-	AutoManualMode mode() const { return m_mode; }
-	
-	QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    // Member-wise copying is OK.
+
+    Params(double deskew_angle_deg,
+           Dependencies const& deps, AutoManualMode mode);
+
+    Params(QDomElement const& deskew_el);
+
+    ~Params();
+
+    double deskewAngle() const
+    {
+        return m_deskewAngleDeg;
+    }
+
+    Dependencies const& dependencies() const
+    {
+        return m_deps;
+    }
+
+    AutoManualMode mode() const
+    {
+        return m_mode;
+    }
+
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 private:
-	double m_deskewAngleDeg;
-	Dependencies m_deps;
-	AutoManualMode m_mode;
+    double m_deskewAngleDeg;
+    Dependencies m_deps;
+    AutoManualMode m_mode;
 };
 
 } // namespace deskew

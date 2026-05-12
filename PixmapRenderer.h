@@ -25,26 +25,26 @@ class QPixmap;
 class PixmapRenderer
 {
 public:
-	/**
-	 * \brief Workarounds some problems with QPainter::drawPixmap().
-	 *
-	 * This method is more or less equivalent to:
-	 * \code
-	 * QPainter::drawPixmap(0, 0, pixmap);
-	 * \endcode
-	 * However, there are two problems with the above code:\n
-	 * 1. On X11, QPainter doesn't (as of Qt 4.4.0) use XRender if
-	 *    a transformation is applied.  We call XRender manually, but
-	 *    note that not all features of QPainter are implemented.
-	 *    In particular, clipping will be done by the bounding box
-	 *    of the requested clip region.\n
-	 * 2. On Windows, the above code is very slow if a large zoom is
-	 *    specified in QPainter.  To fix that we calculate the region of
-	 *    the image to be displayed and pass it to the rendering engine.
-	 */
-	static void drawPixmap(QPainter& painter, QPixmap const& pixmap);
+    /**
+     * \brief Workarounds some problems with QPainter::drawPixmap().
+     *
+     * This method is more or less equivalent to:
+     * \code
+     * QPainter::drawPixmap(0, 0, pixmap);
+     * \endcode
+     * However, there are two problems with the above code:\n
+     * 1. On X11, QPainter doesn't (as of Qt 4.4.0) use XRender if
+     *    a transformation is applied.  We call XRender manually, but
+     *    note that not all features of QPainter are implemented.
+     *    In particular, clipping will be done by the bounding box
+     *    of the requested clip region.\n
+     * 2. On Windows, the above code is very slow if a large zoom is
+     *    specified in QPainter.  To fix that we calculate the region of
+     *    the image to be displayed and pass it to the rendering engine.
+     */
+    static void drawPixmap(QPainter& painter, QPixmap const& pixmap);
 private:
-	static void drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap);
+    static void drawPixmapNoXRender(QPainter& painter, QPixmap const& pixmap);
 };
 
 #endif

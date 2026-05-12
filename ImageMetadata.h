@@ -24,44 +24,58 @@
 
 class ImageMetadata
 {
-	// Member-wise copying is OK.
+    // Member-wise copying is OK.
 public:
-	enum DpiStatus {
-		DPI_OK,
-		DPI_UNDEFINED,
-		DPI_TOO_LARGE,
-		DPI_TOO_SMALL,
-		DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE
-	};
-	
-	ImageMetadata() {}
-	
-	ImageMetadata(QSize size, Dpi dpi) : m_size(size), m_dpi(dpi) {}
-	
-	QSize const& size() const { return m_size; }
-	
-	void setSize(QSize const& size) { m_size = size; }
-	
-	Dpi const& dpi() const { return m_dpi; }
-	
-	void setDpi(Dpi const& dpi) { m_dpi = dpi; }
-	
-	bool isDpiOK() const;
-	
-	DpiStatus horizontalDpiStatus() const;
-	
-	DpiStatus verticalDpiStatus() const;
-	
-	bool operator==(ImageMetadata const& other) const;
-	
-	bool operator!=(ImageMetadata const& other) const {
-		return !(*this == other);
-	}
+    enum DpiStatus
+    {
+        DPI_OK,
+        DPI_UNDEFINED,
+        DPI_TOO_LARGE,
+        DPI_TOO_SMALL,
+        DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE
+    };
+
+    ImageMetadata() {}
+
+    ImageMetadata(QSize size, Dpi dpi) : m_size(size), m_dpi(dpi) {}
+
+    QSize const& size() const
+    {
+        return m_size;
+    }
+
+    void setSize(QSize const& size)
+    {
+        m_size = size;
+    }
+
+    Dpi const& dpi() const
+    {
+        return m_dpi;
+    }
+
+    void setDpi(Dpi const& dpi)
+    {
+        m_dpi = dpi;
+    }
+
+    bool isDpiOK() const;
+
+    DpiStatus horizontalDpiStatus() const;
+
+    DpiStatus verticalDpiStatus() const;
+
+    bool operator==(ImageMetadata const& other) const;
+
+    bool operator!=(ImageMetadata const& other) const
+    {
+        return !(*this == other);
+    }
 private:
-	static DpiStatus dpiStatus(int pixel_size, int dpi);
-	
-	QSize m_size;
-	Dpi m_dpi;
+    static DpiStatus dpiStatus(int pixel_size, int dpi);
+
+    QSize m_size;
+    Dpi m_dpi;
 };
 
 #endif

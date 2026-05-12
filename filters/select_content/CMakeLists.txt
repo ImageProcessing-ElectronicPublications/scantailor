@@ -9,21 +9,21 @@ SOURCE_GROUP("UI Files" FILES ${ui_files})
 SOURCE_GROUP("Generated" FILES ${ui_sources})
 
 SET(
-	sources
-	ImageView.cpp ImageView.h
-	Filter.cpp Filter.h
-	OptionsWidget.cpp OptionsWidget.h
-	ApplyDialog.cpp ApplyDialog.h
-	ContentBoxFinder.cpp ContentBoxFinder.h
-	Task.cpp Task.h
-	CacheDrivenTask.cpp CacheDrivenTask.h
-	Dependencies.cpp Dependencies.h
-	Params.cpp Params.h
-	Settings.cpp Settings.h
-	Thumbnail.cpp Thumbnail.h
-	PhysSizeCalc.cpp PhysSizeCalc.h
-	OrderByWidthProvider.cpp OrderByWidthProvider.h
-	OrderByHeightProvider.cpp OrderByHeightProvider.h
+    sources
+    ImageView.cpp ImageView.h
+    Filter.cpp Filter.h
+    OptionsWidget.cpp OptionsWidget.h
+    ApplyDialog.cpp ApplyDialog.h
+    ContentBoxFinder.cpp ContentBoxFinder.h
+    Task.cpp Task.h
+    CacheDrivenTask.cpp CacheDrivenTask.h
+    Dependencies.cpp Dependencies.h
+    Params.cpp Params.h
+    Settings.cpp Settings.h
+    Thumbnail.cpp Thumbnail.h
+    PhysSizeCalc.cpp PhysSizeCalc.h
+    OrderByWidthProvider.cpp OrderByWidthProvider.h
+    OrderByHeightProvider.cpp OrderByHeightProvider.h
 )
 SOURCE_GROUP("Sources" FILES ${sources})
 ADD_LIBRARY(select_content STATIC ${sources} ${ui_sources})

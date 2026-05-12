@@ -43,41 +43,45 @@ namespace select_content
 class Task::UiUpdater : public FilterResult
 {
 public:
-	UiUpdater(IntrusivePtr<Filter> const& filter,
-		PageId const& page_id,
-		std::auto_ptr<DebugImages> dbg,
-		QImage const& image,
-		ImageTransformation const& xform,
-		OptionsWidget::UiData const& ui_data, bool batch);
-	
-	virtual void updateUI(FilterUiInterface* ui);
-	
-	virtual IntrusivePtr<AbstractFilter> filter() { return m_ptrFilter; }
+    UiUpdater(IntrusivePtr<Filter> const& filter,
+              PageId const& page_id,
+              std::auto_ptr<DebugImages> dbg,
+              QImage const& image,
+              ImageTransformation const& xform,
+              OptionsWidget::UiData const& ui_data, bool batch);
+
+    virtual void updateUI(FilterUiInterface* ui);
+
+    virtual IntrusivePtr<AbstractFilter> filter()
+    {
+        return m_ptrFilter;
+    }
 private:
-	IntrusivePtr<Filter> m_ptrFilter;
-	PageId m_pageId;
-	std::auto_ptr<DebugImages> m_ptrDbg;
-	QImage m_image;
-	QImage m_downscaledImage;
-	ImageTransformation m_xform;
-	OptionsWidget::UiData m_uiData;
-	bool m_batchProcessing;
+    IntrusivePtr<Filter> m_ptrFilter;
+    PageId m_pageId;
+    std::auto_ptr<DebugImages> m_ptrDbg;
+    QImage m_image;
+    QImage m_downscaledImage;
+    ImageTransformation m_xform;
+    OptionsWidget::UiData m_uiData;
+    bool m_batchProcessing;
 };
 
 
 Task::Task(IntrusivePtr<Filter> const& filter,
-	IntrusivePtr<page_layout::Task> const& next_task,
-	IntrusivePtr<Settings> const& settings,
-	PageId const& page_id, bool const batch, bool const debug)
-:	m_ptrFilter(filter),
-	m_ptrNextTask(next_task),
-	m_ptrSettings(settings),
-	m_pageId(page_id),
-	m_batchProcessing(batch)
+           IntrusivePtr<page_layout::Task> const& next_task,
+           IntrusivePtr<Settings> const& settings,
+           PageId const& page_id, bool const batch, bool const debug)
+    :	m_ptrFilter(filter),
+      m_ptrNextTask(next_task),
+      m_ptrSettings(settings),
+      m_pageId(page_id),
+      m_batchProcessing(batch)
 {
-	if (debug) {
-		m_ptrDbg.reset(new DebugImages);
-	}
+    if (debug)
+    {
+        m_ptrDbg.reset(new DebugImages);
+    }
 }
 
 Task::~Task()
@@ -87,117 +91,127 @@ Task::~Task()
 FilterResultPtr
 Task::process(TaskStatus const& status, FilterData const& data)
 {
-	status.throwIfCancelled();
-	
-	Dependencies const deps(data.xform().resultingPreCropArea());
+    status.throwIfCancelled();
 
-	std::auto_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
-	if (params.get() && !params->dependencies().matches(deps) && (params->mode() == MODE_AUTO)) {
-		params.reset();
-	}
+    Dependencies const deps(data.xform().resultingPreCropArea());
 
-	OptionsWidget::UiData ui_data;
-	ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
+    std::auto_ptr<Params> params(m_ptrSettings->getPageParams(m_pageId));
+    if (params.get() && !params->dependencies().matches(deps) && (params->mode() == MODE_AUTO))
+    {
+        params.reset();
+    }
 
-	if (params.get()) {
-		ui_data.setContentRect(params->contentRect());
-		ui_data.setDependencies(deps);
-		ui_data.setMode(params->mode());
+    OptionsWidget::UiData ui_data;
+    ui_data.setSizeCalc(PhysSizeCalc(data.xform()));
 
-		if (!params->dependencies().matches(deps)) {
-			QRectF content_rect = ui_data.contentRect();
-			QPointF new_center= deps.rotatedPageOutline().boundingRect().center();
-			QPointF old_center = params->dependencies().rotatedPageOutline().boundingRect().center();
+    if (params.get())
+    {
+        ui_data.setContentRect(params->contentRect());
+        ui_data.setDependencies(deps);
+        ui_data.setMode(params->mode());
 
-			content_rect.translate(new_center - old_center);
-			ui_data.setContentRect(content_rect);
-		}
+        if (!params->dependencies().matches(deps))
+        {
+            QRectF content_rect = ui_data.contentRect();
+            QPointF new_center= deps.rotatedPageOutline().boundingRect().center();
+            QPointF old_center = params->dependencies().rotatedPageOutline().boundingRect().center();
 
-		if ((params->contentSizeMM().isEmpty() && !params->contentRect().isEmpty()) || !params->dependencies().matches(deps)) {
-			// Backwards compatibility: put the missing data where it belongs.
-			Params const new_params(
-				ui_data.contentRect(), ui_data.contentSizeMM(),
-				deps, params->mode()
-			);
-			m_ptrSettings->setPageParams(m_pageId, new_params);
-		}
-	} else {
-		QRectF const content_rect(
-			ContentBoxFinder::findContentBox(
-				status, data, m_ptrDbg.get()
-			)
-		);
-		ui_data.setContentRect(content_rect);
-		ui_data.setDependencies(deps);
-		ui_data.setMode(MODE_AUTO);
+            content_rect.translate(new_center - old_center);
+            ui_data.setContentRect(content_rect);
+        }
 
-		Params const new_params(
-			ui_data.contentRect(), ui_data.contentSizeMM(), deps, MODE_AUTO
-		);
-		m_ptrSettings->setPageParams(m_pageId, new_params);
-	}
-	
-	status.throwIfCancelled();
-	
-	if (m_ptrNextTask) {
-		return m_ptrNextTask->process(
-			status, FilterData(data, data.xform()),
-			ui_data.contentRect()
-		);
-	} else {
-		return FilterResultPtr(
-			new UiUpdater(
-				m_ptrFilter, m_pageId, m_ptrDbg, data.origImage(),
-				data.xform(), ui_data, m_batchProcessing
-			)
-		);
-	}
+        if ((params->contentSizeMM().isEmpty() && !params->contentRect().isEmpty()) || !params->dependencies().matches(deps))
+        {
+            // Backwards compatibility: put the missing data where it belongs.
+            Params const new_params(
+                ui_data.contentRect(), ui_data.contentSizeMM(),
+                deps, params->mode()
+            );
+            m_ptrSettings->setPageParams(m_pageId, new_params);
+        }
+    }
+    else
+    {
+        QRectF const content_rect(
+            ContentBoxFinder::findContentBox(
+                status, data, m_ptrDbg.get()
+            )
+        );
+        ui_data.setContentRect(content_rect);
+        ui_data.setDependencies(deps);
+        ui_data.setMode(MODE_AUTO);
+
+        Params const new_params(
+            ui_data.contentRect(), ui_data.contentSizeMM(), deps, MODE_AUTO
+        );
+        m_ptrSettings->setPageParams(m_pageId, new_params);
+    }
+
+    status.throwIfCancelled();
+
+    if (m_ptrNextTask)
+    {
+        return m_ptrNextTask->process(
+                   status, FilterData(data, data.xform()),
+                   ui_data.contentRect()
+               );
+    }
+    else
+    {
+        return FilterResultPtr(
+                   new UiUpdater(
+                       m_ptrFilter, m_pageId, m_ptrDbg, data.origImage(),
+                       data.xform(), ui_data, m_batchProcessing
+                   )
+               );
+    }
 }
 
 
 /*============================ Task::UiUpdater ==========================*/
 
 Task::UiUpdater::UiUpdater(
-	IntrusivePtr<Filter> const& filter, PageId const& page_id,
-	std::auto_ptr<DebugImages> dbg, QImage const& image,
-	ImageTransformation const& xform, OptionsWidget::UiData const& ui_data,
-	bool const batch)
-:	m_ptrFilter(filter),
-	m_pageId(page_id),
-	m_ptrDbg(dbg),
-	m_image(image),
-	m_downscaledImage(ImageView::createDownscaledImage(image)),
-	m_xform(xform),
-	m_uiData(ui_data),
-	m_batchProcessing(batch)
+    IntrusivePtr<Filter> const& filter, PageId const& page_id,
+    std::auto_ptr<DebugImages> dbg, QImage const& image,
+    ImageTransformation const& xform, OptionsWidget::UiData const& ui_data,
+    bool const batch)
+    :	m_ptrFilter(filter),
+      m_pageId(page_id),
+      m_ptrDbg(dbg),
+      m_image(image),
+      m_downscaledImage(ImageView::createDownscaledImage(image)),
+      m_xform(xform),
+      m_uiData(ui_data),
+      m_batchProcessing(batch)
 {
 }
 
 void
 Task::UiUpdater::updateUI(FilterUiInterface* ui)
 {
-	// This function is executed from the GUI thread.
-	
-	OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
-	opt_widget->postUpdateUI(m_uiData);
-	ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
-	
-	ui->invalidateThumbnail(m_pageId);
-	
-	if (m_batchProcessing) {
-		return;
-	}
-	
-	ImageView* view = new ImageView(
-		m_image, m_downscaledImage,
-		m_xform, m_uiData.contentRect()
-	);
-	ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
-	
-	QObject::connect(
-		view, SIGNAL(manualContentRectSet(QRectF const&)),
-		opt_widget, SLOT(manualContentRectSet(QRectF const&))
-	);
+    // This function is executed from the GUI thread.
+
+    OptionsWidget* const opt_widget = m_ptrFilter->optionsWidget();
+    opt_widget->postUpdateUI(m_uiData);
+    ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
+
+    ui->invalidateThumbnail(m_pageId);
+
+    if (m_batchProcessing)
+    {
+        return;
+    }
+
+    ImageView* view = new ImageView(
+        m_image, m_downscaledImage,
+        m_xform, m_uiData.contentRect()
+    );
+    ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_ptrDbg.get());
+
+    QObject::connect(
+        view, SIGNAL(manualContentRectSet(QRectF const&)),
+        opt_widget, SLOT(manualContentRectSet(QRectF const&))
+    );
 }
 
 } // namespace select_content

@@ -50,60 +50,60 @@ class Settings;
 
 class PictureZoneEditor : public ImageViewBase, private InteractionHandler
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	PictureZoneEditor(
-		QImage const& image, ImagePixmapUnion const& downscaled_image,
-		imageproc::BinaryImage const& picture_mask,
-		QTransform const& image_to_virt, QPolygonF const& virt_display_area,
-		PageId const& page_id, IntrusivePtr<Settings> const& settings);
-	
-	virtual ~PictureZoneEditor();
+    PictureZoneEditor(
+        QImage const& image, ImagePixmapUnion const& downscaled_image,
+        imageproc::BinaryImage const& picture_mask,
+        QTransform const& image_to_virt, QPolygonF const& virt_display_area,
+        PageId const& page_id, IntrusivePtr<Settings> const& settings);
+
+    virtual ~PictureZoneEditor();
 signals:
-	void invalidateThumbnail(PageId const& page_id);
+    void invalidateThumbnail(PageId const& page_id);
 protected:
-	virtual void onPaint(QPainter& painter, InteractionState const& interaction);
+    virtual void onPaint(QPainter& painter, InteractionState const& interaction);
 private slots:
-	void advancePictureMaskAnimation();
+    void advancePictureMaskAnimation();
 
-	void initiateBuildingScreenPictureMask();
+    void initiateBuildingScreenPictureMask();
 
-	void commitZones();
+    void commitZones();
 
-	void updateRequested();
+    void updateRequested();
 private:
-	class MaskTransformTask;
-	
-	bool validateScreenPictureMask() const;
+    class MaskTransformTask;
 
-	void schedulePictureMaskRebuild();
+    bool validateScreenPictureMask() const;
 
-	void screenPictureMaskBuilt(QPoint const& origin, QImage const& mask);
+    void schedulePictureMaskRebuild();
 
-	void paintOverPictureMask(QPainter& painter);
+    void screenPictureMaskBuilt(QPoint const& origin, QImage const& mask);
 
-	void showPropertiesDialog(EditableZoneSet::Zone const& zone);
+    void paintOverPictureMask(QPainter& painter);
 
-	EditableZoneSet m_zones;
+    void showPropertiesDialog(EditableZoneSet::Zone const& zone);
 
-	// Must go after m_zones.
-	ZoneInteractionContext m_context;
+    EditableZoneSet m_zones;
 
-	DragHandler m_dragHandler;
-	ZoomHandler m_zoomHandler;
+    // Must go after m_zones.
+    ZoneInteractionContext m_context;
 
-	imageproc::BinaryImage m_origPictureMask;
-	QPixmap m_screenPictureMask;
-	QPoint m_screenPictureMaskOrigin;
-	QTransform m_screenPictureMaskXform;
-	QTransform m_potentialPictureMaskXform;
-	QTimer m_pictureMaskRebuildTimer;
-	QTimer m_pictureMaskAnimateTimer;
-	int m_pictureMaskAnimationPhase; // degrees
-	IntrusivePtr<MaskTransformTask> m_ptrMaskTransformTask;
+    DragHandler m_dragHandler;
+    ZoomHandler m_zoomHandler;
 
-	PageId m_pageId;
-	IntrusivePtr<Settings> m_ptrSettings;
+    imageproc::BinaryImage m_origPictureMask;
+    QPixmap m_screenPictureMask;
+    QPoint m_screenPictureMaskOrigin;
+    QTransform m_screenPictureMaskXform;
+    QTransform m_potentialPictureMaskXform;
+    QTimer m_pictureMaskRebuildTimer;
+    QTimer m_pictureMaskAnimateTimer;
+    int m_pictureMaskAnimationPhase; // degrees
+    IntrusivePtr<MaskTransformTask> m_ptrMaskTransformTask;
+
+    PageId m_pageId;
+    IntrusivePtr<Settings> m_ptrSettings;
 };
 
 } // namespace output

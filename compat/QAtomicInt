@@ -24,23 +24,31 @@
 class QAtomicInt
 {
 public:
-	QAtomicInt() : m_val(0) {}
-	
-	QAtomicInt(int val) : m_val(val) {}
-	
-	int fetchAndStoreRelaxed(int new_val) {
-		return q_atomic_set_int(&m_val, new_val);
-	}
-	
-	int fetchAndAddRelaxed(int delta) {
-		return q_atomic_fetch_and_add_int(&m_val, delta);
-	}
-	
-	bool ref() { return q_atomic_increment(&m_val) != 0; }
-	
-	bool deref() { return q_atomic_decrement(&m_val) != 0; }
+    QAtomicInt() : m_val(0) {}
+
+    QAtomicInt(int val) : m_val(val) {}
+
+    int fetchAndStoreRelaxed(int new_val)
+    {
+        return q_atomic_set_int(&m_val, new_val);
+    }
+
+    int fetchAndAddRelaxed(int delta)
+    {
+        return q_atomic_fetch_and_add_int(&m_val, delta);
+    }
+
+    bool ref()
+    {
+        return q_atomic_increment(&m_val) != 0;
+    }
+
+    bool deref()
+    {
+        return q_atomic_decrement(&m_val) != 0;
+    }
 private:
-	int m_val;
+    int m_val;
 };
 
 #endif

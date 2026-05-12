@@ -22,10 +22,10 @@
 class OpenGLSupport
 {
 public:
-	/**
-	 * \brief Returns true if OpenGL support is present and provides the necessary features.
-	 */
-	static bool supported();
+    /**
+     * \brief Returns true if OpenGL support is present and provides the necessary features.
+     */
+    static bool supported();
 };
 
 #endif

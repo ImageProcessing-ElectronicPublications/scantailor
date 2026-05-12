@@ -9,24 +9,24 @@ SOURCE_GROUP("UI Files" FILES ${ui_files})
 SOURCE_GROUP("Generated" FILES ${ui_sources})
 
 SET(
-	sources
-	SplitLineObject.h
-	ImageView.cpp ImageView.h
-	Thumbnail.cpp Thumbnail.h
-	Params.cpp Params.h
-	Dependencies.cpp Dependencies.h
-	PageLayout.cpp PageLayout.h
-	PageLayoutEstimator.cpp PageLayoutEstimator.h
-	VertLineFinder.cpp VertLineFinder.h
-	Filter.cpp Filter.h
-	OptionsWidget.cpp OptionsWidget.h
-	SplitModeDialog.cpp SplitModeDialog.h
-	Settings.cpp Settings.h
-	Task.cpp Task.h
-	CacheDrivenTask.cpp CacheDrivenTask.h
-	LayoutType.cpp LayoutType.h
-	UnremoveButton.cpp UnremoveButton.h
-	OrderBySplitTypeProvider.cpp OrderBySplitTypeProvider.h
+    sources
+    SplitLineObject.h
+    ImageView.cpp ImageView.h
+    Thumbnail.cpp Thumbnail.h
+    Params.cpp Params.h
+    Dependencies.cpp Dependencies.h
+    PageLayout.cpp PageLayout.h
+    PageLayoutEstimator.cpp PageLayoutEstimator.h
+    VertLineFinder.cpp VertLineFinder.h
+    Filter.cpp Filter.h
+    OptionsWidget.cpp OptionsWidget.h
+    SplitModeDialog.cpp SplitModeDialog.h
+    Settings.cpp Settings.h
+    Task.cpp Task.h
+    CacheDrivenTask.cpp CacheDrivenTask.h
+    LayoutType.cpp LayoutType.h
+    UnremoveButton.cpp UnremoveButton.h
+    OrderBySplitTypeProvider.cpp OrderBySplitTypeProvider.h
 )
 SOURCE_GROUP("Sources" FILES ${sources})
 ADD_LIBRARY(page_split STATIC ${sources} ${ui_sources})

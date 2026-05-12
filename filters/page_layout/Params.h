@@ -32,24 +32,33 @@ namespace page_layout
 
 class Params
 {
-	// Member-wise copying is OK.
+    // Member-wise copying is OK.
 public:
-	Params(Margins const& hard_margins_mm,
-		QSizeF const& content_size_mm, Alignment const& alignment);
-	
-	Params(QDomElement const& el);
-	
-	Margins const& hardMarginsMM() const { return m_hardMarginsMM; }
-	
-	QSizeF const& contentSizeMM() const { return m_contentSizeMM; }
-	
-	Alignment const& alignment() const { return m_alignment; }
-	
-	QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    Params(Margins const& hard_margins_mm,
+           QSizeF const& content_size_mm, Alignment const& alignment);
+
+    Params(QDomElement const& el);
+
+    Margins const& hardMarginsMM() const
+    {
+        return m_hardMarginsMM;
+    }
+
+    QSizeF const& contentSizeMM() const
+    {
+        return m_contentSizeMM;
+    }
+
+    Alignment const& alignment() const
+    {
+        return m_alignment;
+    }
+
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 private:
-	Margins m_hardMarginsMM;
-	QSizeF m_contentSizeMM;
-	Alignment m_alignment;
+    Margins m_hardMarginsMM;
+    QSizeF m_contentSizeMM;
+    Alignment m_alignment;
 };
 
 } // namespace page_layout

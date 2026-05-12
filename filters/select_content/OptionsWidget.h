@@ -38,66 +38,66 @@ namespace select_content
 class Settings;
 
 class OptionsWidget :
-	public FilterOptionsWidget, private Ui::SelectContentOptionsWidget
+    public FilterOptionsWidget, private Ui::SelectContentOptionsWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	class UiData
-	{
-		// Member-wise copying is OK.
-	public:
-		UiData();
-		
-		~UiData();
-		
-		void setSizeCalc(PhysSizeCalc const& calc);
+    class UiData
+    {
+        // Member-wise copying is OK.
+    public:
+        UiData();
 
-		void setContentRect(QRectF const& content_rect);
-		
-		QRectF const& contentRect() const;
+        ~UiData();
 
-		QSizeF contentSizeMM() const;
-		
-		void setDependencies(Dependencies const& deps);
-		
-		Dependencies const& dependencies() const;
-		
-		void setMode(AutoManualMode mode);
-		
-		AutoManualMode mode() const;
-	private:
-		QRectF m_contentRect; // In virtual image coordinates.
-		PhysSizeCalc m_sizeCalc;
-		Dependencies m_deps;
-		AutoManualMode m_mode;
-	};
-	
-	OptionsWidget(IntrusivePtr<Settings> const& settings,
-		PageSelectionAccessor const& page_selection_accessor);
-	
-	virtual ~OptionsWidget();
-	
-	void preUpdateUI(PageId const& page_id);
-	
-	void postUpdateUI(UiData const& ui_data);
+        void setSizeCalc(PhysSizeCalc const& calc);
+
+        void setContentRect(QRectF const& content_rect);
+
+        QRectF const& contentRect() const;
+
+        QSizeF contentSizeMM() const;
+
+        void setDependencies(Dependencies const& deps);
+
+        Dependencies const& dependencies() const;
+
+        void setMode(AutoManualMode mode);
+
+        AutoManualMode mode() const;
+    private:
+        QRectF m_contentRect; // In virtual image coordinates.
+        PhysSizeCalc m_sizeCalc;
+        Dependencies m_deps;
+        AutoManualMode m_mode;
+    };
+
+    OptionsWidget(IntrusivePtr<Settings> const& settings,
+                  PageSelectionAccessor const& page_selection_accessor);
+
+    virtual ~OptionsWidget();
+
+    void preUpdateUI(PageId const& page_id);
+
+    void postUpdateUI(UiData const& ui_data);
 public slots:
-	void manualContentRectSet(QRectF const& content_rect);
+    void manualContentRectSet(QRectF const& content_rect);
 private slots:
-	void showApplyToDialog();
+    void showApplyToDialog();
 
-	void applySelection(std::set<PageId> const& pages);
+    void applySelection(std::set<PageId> const& pages);
 
-	void modeChanged(bool auto_mode);
+    void modeChanged(bool auto_mode);
 private:
-	void updateModeIndication(AutoManualMode const mode);
-	
-	void commitCurrentParams();
-	
-	IntrusivePtr<Settings> m_ptrSettings;
-	UiData m_uiData;
-	PageSelectionAccessor m_pageSelectionAccessor;
-	PageId m_pageId;
-	int m_ignoreAutoManualToggle;
+    void updateModeIndication(AutoManualMode const mode);
+
+    void commitCurrentParams();
+
+    IntrusivePtr<Settings> m_ptrSettings;
+    UiData m_uiData;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    PageId m_pageId;
+    int m_ignoreAutoManualToggle;
 };
 
 } // namespace select_content

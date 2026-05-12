@@ -33,22 +33,22 @@ namespace deskew
 
 class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ApplyDialog(QWidget* parent, PageId const& cur_page,
-		PageSelectionAccessor const& page_selection_accessor);
-	
-	virtual ~ApplyDialog();
+    ApplyDialog(QWidget* parent, PageId const& cur_page,
+                PageSelectionAccessor const& page_selection_accessor);
+
+    virtual ~ApplyDialog();
 signals:
-	void appliedTo(std::set<PageId> const& pages);
-	void appliedToAllPages(std::set<PageId> const& pages);
+    void appliedTo(std::set<PageId> const& pages);
+    void appliedToAllPages(std::set<PageId> const& pages);
 private slots:
-	void onSubmit();
+    void onSubmit();
 private:
-	PageSequence m_pages;
-	PageId m_curPage;
-	std::set<PageId> m_selectedPages;
-	QButtonGroup* m_pScopeGroup;
+    PageSequence m_pages;
+    PageId m_curPage;
+    std::set<PageId> m_selectedPages;
+    QButtonGroup* m_pScopeGroup;
 };
 
 } // namespace deskew

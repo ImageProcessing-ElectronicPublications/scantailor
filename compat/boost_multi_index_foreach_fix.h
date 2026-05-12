@@ -29,18 +29,18 @@
 // it again causes a redefinition error (e.g. Boost 1.88 + libc++).
 #if BOOST_VERSION < 107200
 
-namespace boost 
+namespace boost
 {
 namespace foreach
-{
+    {
 
-template<typename SuperMeta, typename TagList>
-struct is_noncopyable<boost::multi_index::detail::sequenced_index<SuperMeta, TagList> > : mpl::true_
-{
-};
+        template<typename SuperMeta, typename TagList>
+        struct is_noncopyable<boost::multi_index::detail::sequenced_index<SuperMeta, TagList> > : mpl::true_
+        {
+        };
 
-} // namespace foreach
-} // namespace boost
+                } // namespace foreach
+    } // namespace boost
 
 #endif // BOOST_VERSION < 107200
 

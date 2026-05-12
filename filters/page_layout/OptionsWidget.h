@@ -40,85 +40,97 @@ namespace page_layout
 class Settings;
 
 class OptionsWidget :
-	public FilterOptionsWidget,
-	public Ui::PageLayoutOptionsWidget
+    public FilterOptionsWidget,
+    public Ui::PageLayoutOptionsWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	OptionsWidget(
-		IntrusivePtr<Settings> const& settings,
-		PageSelectionAccessor const& page_selection_accessor);
-	
-	virtual ~OptionsWidget();
-	
-	void preUpdateUI(PageId const& page_id,
-		Margins const& margins_mm, Alignment const& alignment);
-	
-	void postUpdateUI();
-	
-	bool leftRightLinked() const { return m_leftRightLinked; }
-	
-	bool topBottomLinked() const { return m_topBottomLinked; }
-	
-	Margins const& marginsMM() const { return m_marginsMM; }
-	
-	Alignment const& alignment() const { return m_alignment; }
+    OptionsWidget(
+        IntrusivePtr<Settings> const& settings,
+        PageSelectionAccessor const& page_selection_accessor);
+
+    virtual ~OptionsWidget();
+
+    void preUpdateUI(PageId const& page_id,
+                     Margins const& margins_mm, Alignment const& alignment);
+
+    void postUpdateUI();
+
+    bool leftRightLinked() const
+    {
+        return m_leftRightLinked;
+    }
+
+    bool topBottomLinked() const
+    {
+        return m_topBottomLinked;
+    }
+
+    Margins const& marginsMM() const
+    {
+        return m_marginsMM;
+    }
+
+    Alignment const& alignment() const
+    {
+        return m_alignment;
+    }
 signals:
-	void leftRightLinkToggled(bool linked);
-	
-	void topBottomLinkToggled(bool linked);
-	
-	void alignmentChanged(Alignment const& alignment);
-	
-	void marginsSetLocally(Margins const& margins_mm);
-	
-	void aggregateHardSizeChanged();
+    void leftRightLinkToggled(bool linked);
+
+    void topBottomLinkToggled(bool linked);
+
+    void alignmentChanged(Alignment const& alignment);
+
+    void marginsSetLocally(Margins const& margins_mm);
+
+    void aggregateHardSizeChanged();
 public slots:
-	void marginsSetExternally(Margins const& margins_mm);
+    void marginsSetExternally(Margins const& margins_mm);
 private slots:
-	void unitsChanged(int idx);
-	
-	void horMarginsChanged(double val);
-	
-	void vertMarginsChanged(double val);
-	
-	void topBottomLinkClicked();
-	
-	void leftRightLinkClicked();
-	
-	void alignWithOthersToggled();
-	
-	void alignmentButtonClicked();
-	
-	void showApplyMarginsDialog();
-	
-	void showApplyAlignmentDialog();
-	
-	void applyMargins(std::set<PageId> const& pages);
-	
-	void applyAlignment(std::set<PageId> const& pages);
+    void unitsChanged(int idx);
+
+    void horMarginsChanged(double val);
+
+    void vertMarginsChanged(double val);
+
+    void topBottomLinkClicked();
+
+    void leftRightLinkClicked();
+
+    void alignWithOthersToggled();
+
+    void alignmentButtonClicked();
+
+    void showApplyMarginsDialog();
+
+    void showApplyAlignmentDialog();
+
+    void applyMargins(std::set<PageId> const& pages);
+
+    void applyAlignment(std::set<PageId> const& pages);
 private:
-	typedef std::map<QToolButton*, Alignment> AlignmentByButton;
-	
-	void updateMarginsDisplay();
-	
-	void updateLinkDisplay(QToolButton* button, bool linked);
-	
-	void enableDisableAlignmentButtons();
-	
-	IntrusivePtr<Settings> m_ptrSettings;
-	PageSelectionAccessor m_pageSelectionAccessor;
-	QIcon m_chainIcon;
-	QIcon m_brokenChainIcon;
-	AlignmentByButton m_alignmentByButton;
-	double m_mmToUnit;
-	double m_unitToMM;
-	PageId m_pageId;
-	Margins m_marginsMM;
-	Alignment m_alignment;
-	int m_ignoreMarginChanges;
-	bool m_leftRightLinked;
-	bool m_topBottomLinked;
+    typedef std::map<QToolButton*, Alignment> AlignmentByButton;
+
+    void updateMarginsDisplay();
+
+    void updateLinkDisplay(QToolButton* button, bool linked);
+
+    void enableDisableAlignmentButtons();
+
+    IntrusivePtr<Settings> m_ptrSettings;
+    PageSelectionAccessor m_pageSelectionAccessor;
+    QIcon m_chainIcon;
+    QIcon m_brokenChainIcon;
+    AlignmentByButton m_alignmentByButton;
+    double m_mmToUnit;
+    double m_unitToMM;
+    PageId m_pageId;
+    Margins m_marginsMM;
+    Alignment m_alignment;
+    int m_ignoreMarginChanges;
+    bool m_leftRightLinked;
+    bool m_topBottomLinked;
 };
 
 } // namespace page_layout

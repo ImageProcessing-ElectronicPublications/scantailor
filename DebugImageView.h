@@ -28,31 +28,31 @@
 class QImage;
 
 class DebugImageView :
-	public QStackedWidget,
-	public boost::intrusive::list_base_hook<
-		boost::intrusive::link_mode<boost::intrusive::auto_unlink>
-	>
+    public QStackedWidget,
+    public boost::intrusive::list_base_hook<
+    boost::intrusive::link_mode<boost::intrusive::auto_unlink>
+    >
 {
 public:
-	DebugImageView(AutoRemovingFile file,
-		boost::function<QWidget* (QImage const&)> const& image_view_factory =
-		boost::function<QWidget* (QImage const&)>(), QWidget* parent = 0);
+    DebugImageView(AutoRemovingFile file,
+                   boost::function<QWidget* (QImage const&)> const& image_view_factory =
+                       boost::function<QWidget* (QImage const&)>(), QWidget* parent = 0);
 
-	/**
-	 * Tells this widget to either display the actual image or just
-	 * a placeholder.
-	 */
-	void setLive(bool live);
+    /**
+     * Tells this widget to either display the actual image or just
+     * a placeholder.
+     */
+    void setLive(bool live);
 private:
-	class ImageLoadResult;
-	class ImageLoader;
+    class ImageLoadResult;
+    class ImageLoader;
 
-	void imageLoaded(QImage const& image);
+    void imageLoaded(QImage const& image);
 
-	AutoRemovingFile m_file;
-	boost::function<QWidget* (QImage const&)> m_imageViewFactory;
-	QWidget* m_pPlaceholderWidget;
-	bool m_isLive;
+    AutoRemovingFile m_file;
+    boost::function<QWidget* (QImage const&)> m_imageViewFactory;
+    QWidget* m_pPlaceholderWidget;
+    bool m_isLive;
 };
 
 #endif

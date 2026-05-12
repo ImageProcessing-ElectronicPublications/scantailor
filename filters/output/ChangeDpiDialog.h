@@ -36,28 +36,28 @@ namespace output
 
 class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	ChangeDpiDialog(
-		QWidget* parent, Dpi const& dpi, PageId const& cur_page,
-		PageSelectionAccessor const& page_selection_accessor);
-	
-	virtual ~ChangeDpiDialog();
+    ChangeDpiDialog(
+        QWidget* parent, Dpi const& dpi, PageId const& cur_page,
+        PageSelectionAccessor const& page_selection_accessor);
+
+    virtual ~ChangeDpiDialog();
 signals:
-	void accepted(std::set<PageId> const& pages, Dpi const& dpi);
+    void accepted(std::set<PageId> const& pages, Dpi const& dpi);
 private slots:
-	void dpiSelectionChanged(int index);
-	
-	void dpiEditTextChanged(QString const& text);
-	
-	void onSubmit();
+    void dpiSelectionChanged(int index);
+
+    void dpiEditTextChanged(QString const& text);
+
+    void onSubmit();
 private:
-	PageSequence m_pages;
-	std::set<PageId> m_selectedPages;
-	PageId m_curPage;
-	QButtonGroup* m_pScopeGroup;
-	int m_customItemIdx;
-	QString m_customDpiString;
+    PageSequence m_pages;
+    std::set<PageId> m_selectedPages;
+    PageId m_curPage;
+    QButtonGroup* m_pScopeGroup;
+    int m_customItemIdx;
+    QString m_customDpiString;
 };
 
 } // namespace output

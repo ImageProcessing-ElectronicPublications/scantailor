@@ -35,48 +35,82 @@ namespace output
 class Params
 {
 public:
-	Params();
-	
-	Params(QDomElement const& el);
-	
-	Dpi const& outputDpi() const { return m_dpi; }
+    Params();
 
-	void setOutputDpi(Dpi const& dpi) { m_dpi = dpi; }
-	
-	ColorParams const& colorParams() const { return m_colorParams; }
+    Params(QDomElement const& el);
 
-	void setColorParams(ColorParams const& params) { m_colorParams = params; }
+    Dpi const& outputDpi() const
+    {
+        return m_dpi;
+    }
 
-	DewarpingMode const& dewarpingMode() const { return m_dewarpingMode; }
+    void setOutputDpi(Dpi const& dpi)
+    {
+        m_dpi = dpi;
+    }
 
-	void setDewarpingMode(DewarpingMode const& mode) { m_dewarpingMode = mode; }
+    ColorParams const& colorParams() const
+    {
+        return m_colorParams;
+    }
 
-	dewarping::DistortionModel const& distortionModel() const { return m_distortionModel; }
+    void setColorParams(ColorParams const& params)
+    {
+        m_colorParams = params;
+    }
 
-	void setDistortionModel(dewarping::DistortionModel const& model) { m_distortionModel = model; }
+    DewarpingMode const& dewarpingMode() const
+    {
+        return m_dewarpingMode;
+    }
 
-	DepthPerception const& depthPerception() const { return m_depthPerception; }
+    void setDewarpingMode(DewarpingMode const& mode)
+    {
+        m_dewarpingMode = mode;
+    }
 
-	void setDepthPerception(DepthPerception depth_perception) {
-		m_depthPerception = depth_perception;
-	}
+    dewarping::DistortionModel const& distortionModel() const
+    {
+        return m_distortionModel;
+    }
 
-	DespeckleLevel despeckleLevel() const { return m_despeckleLevel; }
+    void setDistortionModel(dewarping::DistortionModel const& model)
+    {
+        m_distortionModel = model;
+    }
 
-	void setDespeckleLevel(DespeckleLevel level) { m_despeckleLevel = level; }
-	
-	QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    DepthPerception const& depthPerception() const
+    {
+        return m_depthPerception;
+    }
+
+    void setDepthPerception(DepthPerception depth_perception)
+    {
+        m_depthPerception = depth_perception;
+    }
+
+    DespeckleLevel despeckleLevel() const
+    {
+        return m_despeckleLevel;
+    }
+
+    void setDespeckleLevel(DespeckleLevel level)
+    {
+        m_despeckleLevel = level;
+    }
+
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 private:
-	static ColorParams::ColorMode parseColorMode(QString const& str);
-	
-	static QString formatColorMode(ColorParams::ColorMode mode);
-	
-	Dpi m_dpi;
-	ColorParams m_colorParams;
-	dewarping::DistortionModel m_distortionModel;
-	DepthPerception m_depthPerception;
-	DewarpingMode m_dewarpingMode;
-	DespeckleLevel m_despeckleLevel;
+    static ColorParams::ColorMode parseColorMode(QString const& str);
+
+    static QString formatColorMode(ColorParams::ColorMode mode);
+
+    Dpi m_dpi;
+    ColorParams m_colorParams;
+    dewarping::DistortionModel m_distortionModel;
+    DepthPerception m_depthPerception;
+    DewarpingMode m_dewarpingMode;
+    DespeckleLevel m_despeckleLevel;
 };
 
 } // namespace output

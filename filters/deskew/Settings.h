@@ -35,28 +35,28 @@ namespace deskew
 
 class Settings : public RefCountable
 {
-	DECLARE_NON_COPYABLE(Settings)
+    DECLARE_NON_COPYABLE(Settings)
 public:
-	Settings();
-	
-	virtual ~Settings();
-	
-	void clear();
+    Settings();
 
-	void performRelinking(AbstractRelinker const& relinker);
-	
-	void setPageParams(PageId const& page_id, Params const& params);
-	
-	void clearPageParams(PageId const& page_id);
-	
-	std::auto_ptr<Params> getPageParams(PageId const& page_id) const;
-	
-	void setDegress(std::set<PageId> const& pages, Params const& params);
+    virtual ~Settings();
+
+    void clear();
+
+    void performRelinking(AbstractRelinker const& relinker);
+
+    void setPageParams(PageId const& page_id, Params const& params);
+
+    void clearPageParams(PageId const& page_id);
+
+    std::auto_ptr<Params> getPageParams(PageId const& page_id) const;
+
+    void setDegress(std::set<PageId> const& pages, Params const& params);
 private:
-	typedef std::map<PageId, Params> PerPageParams;
-	
-	mutable QMutex m_mutex;
-	PerPageParams m_perPageParams;
+    typedef std::map<PageId, Params> PerPageParams;
+
+    mutable QMutex m_mutex;
+    PerPageParams m_perPageParams;
 };
 
 } // namespace deskew

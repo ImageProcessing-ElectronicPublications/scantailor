@@ -27,39 +27,39 @@ namespace page_layout
 {
 
 Params::Params(
-	Margins const& hard_margins_mm,
-	QSizeF const& content_size_mm, Alignment const& alignment)
-:	m_hardMarginsMM(hard_margins_mm),
-	m_contentSizeMM(content_size_mm),
-	m_alignment(alignment)
+    Margins const& hard_margins_mm,
+    QSizeF const& content_size_mm, Alignment const& alignment)
+    :	m_hardMarginsMM(hard_margins_mm),
+      m_contentSizeMM(content_size_mm),
+      m_alignment(alignment)
 {
 }
 
 Params::Params(QDomElement const& el)
-:	m_hardMarginsMM(
-		XmlUnmarshaller::margins(
-			el.namedItem("hardMarginsMM").toElement()
-		)
-	),
-	m_contentSizeMM(
-		XmlUnmarshaller::sizeF(
-			el.namedItem("contentSizeMM").toElement()
-		)
-	),
-	m_alignment(el.namedItem("alignment").toElement())
+    :	m_hardMarginsMM(
+          XmlUnmarshaller::margins(
+              el.namedItem("hardMarginsMM").toElement()
+          )
+      ),
+      m_contentSizeMM(
+          XmlUnmarshaller::sizeF(
+              el.namedItem("contentSizeMM").toElement()
+          )
+      ),
+      m_alignment(el.namedItem("alignment").toElement())
 {
 }
 
 QDomElement
 Params::toXml(QDomDocument& doc, QString const& name) const
 {
-	XmlMarshaller marshaller(doc);
-	
-	QDomElement el(doc.createElement(name));
-	el.appendChild(marshaller.margins(m_hardMarginsMM, "hardMarginsMM"));
-	el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));
-	el.appendChild(m_alignment.toXml(doc, "alignment"));
-	return el;
+    XmlMarshaller marshaller(doc);
+
+    QDomElement el(doc.createElement(name));
+    el.appendChild(marshaller.margins(m_hardMarginsMM, "hardMarginsMM"));
+    el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));
+    el.appendChild(m_alignment.toXml(doc, "alignment"));
+    return el;
 }
 
 } // namespace page_layout

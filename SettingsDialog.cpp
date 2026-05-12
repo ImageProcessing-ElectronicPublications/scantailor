@@ -24,29 +24,32 @@
 #include <QVariant>
 
 SettingsDialog::SettingsDialog(QWidget* parent)
-:	QDialog(parent)
+    :	QDialog(parent)
 {
-	ui.setupUi(this);
+    ui.setupUi(this);
 
-	QSettings settings;
+    QSettings settings;
 
 #ifndef ENABLE_OPENGL
-	ui.use3DAcceleration->setChecked(false);
-	ui.use3DAcceleration->setEnabled(false);
-	ui.use3DAcceleration->setToolTip(tr("Compiled without OpenGL support."));
+    ui.use3DAcceleration->setChecked(false);
+    ui.use3DAcceleration->setEnabled(false);
+    ui.use3DAcceleration->setToolTip(tr("Compiled without OpenGL support."));
 #else
-	if (!OpenGLSupport::supported()) {
-		ui.use3DAcceleration->setChecked(false);
-		ui.use3DAcceleration->setEnabled(false);
-		ui.use3DAcceleration->setToolTip(tr("Your hardware / driver don't provide the necessary features."));
-	} else {
-		ui.use3DAcceleration->setChecked(
-			settings.value("settings/use_3d_acceleration", false).toBool()
-		);
-	}
+    if (!OpenGLSupport::supported())
+    {
+        ui.use3DAcceleration->setChecked(false);
+        ui.use3DAcceleration->setEnabled(false);
+        ui.use3DAcceleration->setToolTip(tr("Your hardware / driver don't provide the necessary features."));
+    }
+    else
+    {
+        ui.use3DAcceleration->setChecked(
+            settings.value("settings/use_3d_acceleration", false).toBool()
+        );
+    }
 #endif
 
-	connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
+    connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
 }
 
 SettingsDialog::~SettingsDialog()
@@ -56,8 +59,8 @@ SettingsDialog::~SettingsDialog()
 void
 SettingsDialog::commitChanges()
 {
-	QSettings settings;
+    QSettings settings;
 #ifdef ENABLE_OPENGL
-	settings.setValue("settings/use_3d_acceleration", ui.use3DAcceleration->isChecked());
+    settings.setValue("settings/use_3d_acceleration", ui.use3DAcceleration->isChecked());
 #endif
 }

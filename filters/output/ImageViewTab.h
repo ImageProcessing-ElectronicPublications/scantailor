@@ -22,12 +22,13 @@
 namespace output
 {
 
-enum ImageViewTab {
-	TAB_OUTPUT,
-	TAB_PICTURE_ZONES,
-	TAB_FILL_ZONES,
-	TAB_DEWARPING,
-	TAB_DESPECKLING
+enum ImageViewTab
+{
+    TAB_OUTPUT,
+    TAB_PICTURE_ZONES,
+    TAB_FILL_ZONES,
+    TAB_DEWARPING,
+    TAB_DESPECKLING
 };
 
 } // namespace output

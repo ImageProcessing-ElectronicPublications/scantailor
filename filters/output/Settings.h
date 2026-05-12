@@ -43,73 +43,73 @@ class Params;
 
 class Settings : public RefCountable
 {
-	DECLARE_NON_COPYABLE(Settings)
+    DECLARE_NON_COPYABLE(Settings)
 public:
-	Settings();
-	
-	virtual ~Settings();
-	
-	void clear();
+    Settings();
 
-	void performRelinking(AbstractRelinker const& relinker);
-	
-	Params getParams(PageId const& page_id) const;
-	
-	void setParams(PageId const& page_id, Params const& params);
+    virtual ~Settings();
 
-	void setColorParams(PageId const& page_id, ColorParams const& prms);
+    void clear();
 
-	void setDpi(PageId const& page_id, Dpi const& dpi);
+    void performRelinking(AbstractRelinker const& relinker);
 
-	void setDewarpingMode(PageId const& page_id, DewarpingMode const& mode);
+    Params getParams(PageId const& page_id) const;
 
-	void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
+    void setParams(PageId const& page_id, Params const& params);
 
-	void setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception);
+    void setColorParams(PageId const& page_id, ColorParams const& prms);
 
-	void setDespeckleLevel(PageId const& page_id, DespeckleLevel level);
-	
-	std::auto_ptr<OutputParams> getOutputParams(PageId const& page_id) const;
-	
-	void removeOutputParams(PageId const& page_id);
-	
-	void setOutputParams(PageId const& page_id, OutputParams const& params);
+    void setDpi(PageId const& page_id, Dpi const& dpi);
 
-	ZoneSet pictureZonesForPage(PageId const& page_id) const;
+    void setDewarpingMode(PageId const& page_id, DewarpingMode const& mode);
 
-	ZoneSet fillZonesForPage(PageId const& page_id) const;
+    void setDistortionModel(PageId const& page_id, dewarping::DistortionModel const& model);
 
-	void setPictureZones(PageId const& page_id, ZoneSet const& zones);
+    void setDepthPerception(PageId const& page_id, DepthPerception const& depth_perception);
 
-	void setFillZones(PageId const& page_id, ZoneSet const& zones);
+    void setDespeckleLevel(PageId const& page_id, DespeckleLevel level);
 
-	/**
-	 * For now, default zone properties are not persistent.
-	 * They may become persistent later though.
-	 */
-	PropertySet defaultPictureZoneProperties() const;
+    std::auto_ptr<OutputParams> getOutputParams(PageId const& page_id) const;
 
-	PropertySet defaultFillZoneProperties() const;
+    void removeOutputParams(PageId const& page_id);
 
-	void setDefaultPictureZoneProperties(PropertySet const& props);
+    void setOutputParams(PageId const& page_id, OutputParams const& params);
 
-	void setDefaultFillZoneProperties(PropertySet const& props);
+    ZoneSet pictureZonesForPage(PageId const& page_id) const;
+
+    ZoneSet fillZonesForPage(PageId const& page_id) const;
+
+    void setPictureZones(PageId const& page_id, ZoneSet const& zones);
+
+    void setFillZones(PageId const& page_id, ZoneSet const& zones);
+
+    /**
+     * For now, default zone properties are not persistent.
+     * They may become persistent later though.
+     */
+    PropertySet defaultPictureZoneProperties() const;
+
+    PropertySet defaultFillZoneProperties() const;
+
+    void setDefaultPictureZoneProperties(PropertySet const& props);
+
+    void setDefaultFillZoneProperties(PropertySet const& props);
 private:
-	typedef std::map<PageId, Params> PerPageParams;
-	typedef std::map<PageId, OutputParams> PerPageOutputParams;
-	typedef std::map<PageId, ZoneSet> PerPageZones;
-	
-	static PropertySet initialPictureZoneProps();
+    typedef std::map<PageId, Params> PerPageParams;
+    typedef std::map<PageId, OutputParams> PerPageOutputParams;
+    typedef std::map<PageId, ZoneSet> PerPageZones;
 
-	static PropertySet initialFillZoneProps();
+    static PropertySet initialPictureZoneProps();
 
-	mutable QMutex m_mutex;
-	PerPageParams m_perPageParams;
-	PerPageOutputParams m_perPageOutputParams;
-	PerPageZones m_perPagePictureZones;
-	PerPageZones m_perPageFillZones;
-	PropertySet m_defaultPictureZoneProps;
-	PropertySet m_defaultFillZoneProps;
+    static PropertySet initialFillZoneProps();
+
+    mutable QMutex m_mutex;
+    PerPageParams m_perPageParams;
+    PerPageOutputParams m_perPageOutputParams;
+    PerPageZones m_perPagePictureZones;
+    PerPageZones m_perPageFillZones;
+    PropertySet m_defaultPictureZoneProps;
+    PropertySet m_defaultFillZoneProps;
 };
 
 } // namespace output

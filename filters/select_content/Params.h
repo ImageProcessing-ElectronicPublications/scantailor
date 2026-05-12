@@ -34,31 +34,43 @@ namespace select_content
 class Params
 {
 public:
-	// Member-wise copying is OK.
-	
-	Params(QRectF const& rect, QSizeF const& size_mm,
-		Dependencies const& deps, AutoManualMode mode);
-	
-	Params(Dependencies const& deps);
-	
-	Params(QDomElement const& filter_el);
-	
-	~Params();
-	
-	QRectF const& contentRect() const { return m_contentRect; }
+    // Member-wise copying is OK.
 
-	QSizeF const& contentSizeMM() const { return m_contentSizeMM; }
-	
-	Dependencies const& dependencies() const { return m_deps; }
-	
-	AutoManualMode mode() const { return m_mode; }
-	
-	QDomElement toXml(QDomDocument& doc, QString const& name) const;
+    Params(QRectF const& rect, QSizeF const& size_mm,
+           Dependencies const& deps, AutoManualMode mode);
+
+    Params(Dependencies const& deps);
+
+    Params(QDomElement const& filter_el);
+
+    ~Params();
+
+    QRectF const& contentRect() const
+    {
+        return m_contentRect;
+    }
+
+    QSizeF const& contentSizeMM() const
+    {
+        return m_contentSizeMM;
+    }
+
+    Dependencies const& dependencies() const
+    {
+        return m_deps;
+    }
+
+    AutoManualMode mode() const
+    {
+        return m_mode;
+    }
+
+    QDomElement toXml(QDomDocument& doc, QString const& name) const;
 private:
-	QRectF m_contentRect;
-	QSizeF m_contentSizeMM;
-	Dependencies m_deps;
-	AutoManualMode m_mode;
+    QRectF m_contentRect;
+    QSizeF m_contentSizeMM;
+    Dependencies m_deps;
+    AutoManualMode m_mode;
 };
 
 } // namespace select_content

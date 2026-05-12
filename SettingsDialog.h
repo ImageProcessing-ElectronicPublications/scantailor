@@ -24,15 +24,15 @@
 
 class SettingsDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SettingsDialog(QWidget* parent = 0);
-	
-	virtual ~SettingsDialog();
+    SettingsDialog(QWidget* parent = 0);
+
+    virtual ~SettingsDialog();
 private slots:
-	void commitChanges();
+    void commitChanges();
 private:
-	Ui::SettingsDialog ui;
+    Ui::SettingsDialog ui;
 };
 
 #endif
