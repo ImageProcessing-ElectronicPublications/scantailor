@@ -36,18 +36,18 @@ ENABLE_TESTING()
 # An undocumented side-effect of CONFIGURE_FILE() is that it makes
 # the whole project depend on the file we are parsing / copying.
 CONFIGURE_FILE(
-    "${PROJECT_SOURCE_DIR}/version.h"
-    "${PROJECT_BINARY_DIR}/.version.h" COPYONLY
+    "${PROJECT_SOURCE_DIR}/src/version.h"
+    "${PROJECT_BINARY_DIR}/src/.version.h" COPYONLY
 )
 
 # Prevent this leftover from old builds to be used in favour
 # of the one in ${PROJECT_SOURCE_DIR}
 IF(NOT "${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
-    FILE(REMOVE "${PROJECT_BINARY_DIR}/version.h")
+    FILE(REMOVE "${PROJECT_BINARY_DIR}/src/version.h")
 ENDIF()
 
 # Extract VERSION and VERSION_QUAD from version.h
-FILE(READ "${PROJECT_SOURCE_DIR}/version.h" version_h_contents)
+FILE(READ "${PROJECT_SOURCE_DIR}/src/version.h" version_h_contents)
 STRING(
     REGEX REPLACE
     ".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
@@ -69,7 +69,7 @@ ENDIF()
 
 # This has to go quite early on, as otherwise we risk picking
 # up an identically named header from a system include path.
-INCLUDE_DIRECTORIES(. foundation math interaction zones)
+INCLUDE_DIRECTORIES(. src src/foundation src/math src/interaction src/zones)
 
 INCLUDE(CheckIncludeFile)
 INCLUDE(CheckIncludeFileCXX)
@@ -94,15 +94,15 @@ GET_FILENAME_COMPONENT(build_outer_dir "${PROJECT_BINARY_DIR}/.." ABSOLUTE)
 SET(STAGING_LIBS_DIR "")
 IF(WIN32)
     FIND_PATH(
-    	DEPS_BUILD_DIR build-qt.bat
-    	HINTS "${build_outer_dir}/scantailor-deps-build"
-    	DOC "Build directory for Scan Tailor dependencies."
+        DEPS_BUILD_DIR build-qt.bat
+        HINTS "${build_outer_dir}/scantailor-deps-build"
+        DOC "Build directory for Scan Tailor dependencies."
     )
     IF(NOT DEPS_BUILD_DIR)
-    	MESSAGE(
-    		FATAL_ERROR "The build directory for Scan Tailor dependencies could not be found! "
-    		"You can specify it manually in DEPS_BUILD_DIR variable. Make sure you build the dependencies first!"
-    	)
+        MESSAGE(
+            FATAL_ERROR "The build directory for Scan Tailor dependencies could not be found! "
+            "You can specify it manually in DEPS_BUILD_DIR variable. Make sure you build the dependencies first!"
+        )
     ENDIF()
     SET(STAGING_LIBS_DIR "${DEPS_BUILD_DIR}/staging/libs")
 ENDIF()
@@ -151,9 +151,9 @@ FIND_PATH(
 )
 IF(NOT JPEG_INCLUDE_DIR)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find jpeg headers.\n"
-    	"You may need to install a package named libjpeg62-dev or similarly."
+        FATAL_ERROR
+        "Could not find jpeg headers.\n"
+        "You may need to install a package named libjpeg62-dev or similarly."
     )
 ENDIF()
 
@@ -167,9 +167,9 @@ FIND_LIBRARY(
 )
 IF(NOT JPEG_LIBRARY)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find jpeg library.\n"
-    	"You may need to install a package named libjpeg62-dev or similarly."
+        FATAL_ERROR
+        "Could not find jpeg library.\n"
+        "You may need to install a package named libjpeg62-dev or similarly."
     )
 ENDIF()
 
@@ -182,9 +182,9 @@ FIND_PATH(
 )
 IF(NOT ZLIB_INCLUDE_DIR)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find zlib headers.\n"
-    	"You may need to install a package named zlib1g-dev or similarly."
+        FATAL_ERROR
+        "Could not find zlib headers.\n"
+        "You may need to install a package named zlib1g-dev or similarly."
     )
 ENDIF()
 
@@ -198,9 +198,9 @@ FIND_LIBRARY(
 )
 IF(NOT ZLIB_LIBRARY)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find zlib library.\n"
-    	"You may need to install a package named zlib1g-dev or similarly."
+        FATAL_ERROR
+        "Could not find zlib library.\n"
+        "You may need to install a package named zlib1g-dev or similarly."
     )
 ENDIF()
 
@@ -212,9 +212,9 @@ FIND_PATH(
 )
 IF(NOT PNG_INCLUDE_DIR)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find libpng headers.\n"
-    	"You may need to install a package named libpng12-dev or similarly."
+        FATAL_ERROR
+        "Could not find libpng headers.\n"
+        "You may need to install a package named libpng12-dev or similarly."
     )
 ENDIF()
 
@@ -228,9 +228,9 @@ FIND_LIBRARY(
 )
 IF(NOT PNG_LIBRARY)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find libpng library.\n"
-    	"You may need to install a package named libpng12-dev or similarly."
+        FATAL_ERROR
+        "Could not find libpng library.\n"
+        "You may need to install a package named libpng12-dev or similarly."
     )
 ENDIF()
 
@@ -244,9 +244,9 @@ FIND_PATH(
 )
 IF(NOT TIFF_INCLUDE_DIR)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find libtiff headers.\n"
-    	"You may need to install a package named libtiff4-dev or similarly."
+        FATAL_ERROR
+        "Could not find libtiff headers.\n"
+        "You may need to install a package named libtiff4-dev or similarly."
     )
 ENDIF()
 
@@ -261,9 +261,9 @@ FIND_LIBRARY(
 )
 IF(NOT TIFF_LIBRARY)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find libtiff library.\n"
-    	"You may need to install a package named libtiff4-dev or similarly."
+        FATAL_ERROR
+        "Could not find libtiff library.\n"
+        "You may need to install a package named libtiff4-dev or similarly."
     )
 ENDIF()
 
@@ -274,8 +274,8 @@ ENDIF()
 
 IF(WIN32)
     FIND_PATH(
-    	BOOST_ROOT boost-build.jam PATHS ${boost_dirs1} ${boost_dirs2}
-    	DOC "Path to top-level Boost source directory."
+        BOOST_ROOT boost-build.jam PATHS ${boost_dirs1} ${boost_dirs2}
+        DOC "Path to top-level Boost source directory."
     )
     SET(Boost_USE_STATIC_LIBS ON)
 ELSE(WIN32)
@@ -286,9 +286,9 @@ SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.35.0 COMPONENTS unit_test_framework prg_exec_monitor)
 IF(NOT Boost_FOUND)
     MESSAGE(
-    	FATAL_ERROR
-    	"Could not find boost headers or libraries.\n"
-    	"You may need to install a package named libboost1.35-dev or similarly."
+        FATAL_ERROR
+        "Could not find boost headers or libraries.\n"
+        "You may need to install a package named libboost1.35-dev or similarly."
     )
 ENDIF(NOT Boost_FOUND)
 
@@ -301,12 +301,12 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # We need to manually use XRender.
     INCLUDE(FindX11)
     IF(NOT X11_Xrender_FOUND)
-    	MESSAGE(
-    		FATAL_ERROR
-    		"Could not find Xrender.h\n"
-    		"You may need to install a package called\n"
-    		"libxrender-dev or libXrender-dev or similarly."
-    	)
+        MESSAGE(
+            FATAL_ERROR
+            "Could not find Xrender.h\n"
+            "You may need to install a package called\n"
+            "libxrender-dev or libXrender-dev or similarly."
+        )
     ENDIF()
 
     INCLUDE_DIRECTORIES("${X11_Xrender_INCLUDE_PATH}")
@@ -316,14 +316,14 @@ ENDIF()
 IF(UNIX AND NOT WIN32)
     FindPthreads()
     IF(PTHREADS_FOUND)
-    	ADD_DEFINITIONS(${PTHREADS_CFLAGS})
-    	LINK_LIBRARIES(${PTHREADS_LIBS})
+        ADD_DEFINITIONS(${PTHREADS_CFLAGS})
+        LINK_LIBRARIES(${PTHREADS_LIBS})
     ELSE()
-    	MESSAGE(
-    		FATAL_ERROR
-    		"Could not detect threading flags.\n"
-    		"Try specifying them manually in PTHREADS_CFLAGS and PTHREADS_LIBS."
-    	)
+        MESSAGE(
+            FATAL_ERROR
+            "Could not detect threading flags.\n"
+            "Try specifying them manually in PTHREADS_CFLAGS and PTHREADS_LIBS."
+        )
     ENDIF()
 ELSEIF(MINGW)
     ADD_DEFINITIONS(-mthreads)
@@ -334,7 +334,7 @@ ENDIF()
 
 CHECK_INCLUDE_FILE(stdint.h HAVE_STDINT_H)
 IF(NOT HAVE_STDINT_H)
-    CONFIGURE_FILE(compat/pstdint.h "${CMAKE_CURRENT_BINARY_DIR}/stdint.h" COPYONLY)
+    CONFIGURE_FILE(src/compat/pstdint.h "${CMAKE_CURRENT_BINARY_DIR}/stdint.h" COPYONLY)
     INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}")
 ELSE(NOT HAVE_STDINT_H)
     FILE(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/stdint.h")
@@ -350,17 +350,17 @@ IF(WIN32)
 #    FIND_LIBRARY(QJPEG_DEBUG qjpegd PATHS "${QT_PLUGINS_DIR}/imageformats")
 #    MARK_AS_ADVANCED(FORCE QJPEG_RELEASE QJPEG_DEBUG)
 #    IF(QJPEG_RELEASE AND NOT QJPEG_DEBUG)
-#    	SET(QJPEG_DEBUG "${QJPEG_RELEASE}")
+#        SET(QJPEG_DEBUG "${QJPEG_RELEASE}")
 #    ELSEIF(QJPEG_DEBUG AND NOT QJPEG_RELEASE)
-#    	SET(QJPEG_RELEASE "${QJPEG_DEBUG}")
+#        SET(QJPEG_RELEASE "${QJPEG_DEBUG}")
 #    ELSEIF(NOT QJPEG_DEBUG AND NOT QJPEG_RELEASE)
-#    	MESSAGE(FATAL_ERROR "qjpeg plugin wasn't found!")
+#        MESSAGE(FATAL_ERROR "qjpeg plugin wasn't found!")
 #    ENDIF()
 #    SET(QJPEG_LIBRARIES "debug;${QJPEG_DEBUG};optimized;${QJPEG_RELEASE}")
 #
     LIST(
-    	APPEND EXTRA_LIBS
-    	winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool
+        APPEND EXTRA_LIBS
+        winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool
     )
 ENDIF()
 
@@ -386,17 +386,17 @@ SET(TRANSLATIONS_DIR_ABS "${CMAKE_INSTALL_PREFIX}/${TRANSLATIONS_DIR_REL}")
 CONFIGURE_FILE(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
 
 # crash_reporter is included unconditionally to collect translation sources from there.
-ADD_SUBDIRECTORY(crash_reporter)
-ADD_SUBDIRECTORY(dewarping)
-ADD_SUBDIRECTORY(foundation)
-ADD_SUBDIRECTORY(math)
-ADD_SUBDIRECTORY(imageproc)
-ADD_SUBDIRECTORY(interaction)
-ADD_SUBDIRECTORY(zones)
-ADD_SUBDIRECTORY(tests)
+ADD_SUBDIRECTORY(src/crash_reporter)
+ADD_SUBDIRECTORY(src/dewarping)
+ADD_SUBDIRECTORY(src/foundation)
+ADD_SUBDIRECTORY(src/math)
+ADD_SUBDIRECTORY(src/imageproc)
+ADD_SUBDIRECTORY(src/interaction)
+ADD_SUBDIRECTORY(src/zones)
+ADD_SUBDIRECTORY(src/tests)
 
-FILE(GLOB common_ui_files ui/ErrorWidget.ui)
-FILE(GLOB gui_only_ui_files "ui/*.ui")
+FILE(GLOB common_ui_files src/ui/ErrorWidget.ui)
+FILE(GLOB gui_only_ui_files "src/ui/*.ui")
 FOREACH(ui_file ${common_ui_files})
     LIST(REMOVE_ITEM gui_only_ui_files "${ui_file}")
 ENDFOREACH()
@@ -405,17 +405,17 @@ SOURCE_GROUP("UI Files" FILES ${common_ui_files} ${gui_only_ui_files})
 qt5_wrap_ui(common_ui_sources ${common_ui_files})
 qt5_wrap_ui(gui_only_ui_sources ${gui_only_ui_files})
 SET_SOURCE_FILES_PROPERTIES(${common_ui_sources} ${gui_only_ui_files} PROPERTIES GENERATED TRUE)
-ADD_SUBDIRECTORY(ui)
+ADD_SUBDIRECTORY(src/ui)
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}") # for ui files
 
 ADD_CUSTOM_TARGET(toplevel_ui_sources DEPENDS ${common_ui_sources} ${gui_only_ui_sources})
 
-ADD_SUBDIRECTORY(filters/fix_orientation)
-ADD_SUBDIRECTORY(filters/page_split)
-ADD_SUBDIRECTORY(filters/deskew)
-ADD_SUBDIRECTORY(filters/select_content)
-ADD_SUBDIRECTORY(filters/page_layout)
-ADD_SUBDIRECTORY(filters/output)
+ADD_SUBDIRECTORY(src/filters/fix_orientation)
+ADD_SUBDIRECTORY(src/filters/page_split)
+ADD_SUBDIRECTORY(src/filters/deskew)
+ADD_SUBDIRECTORY(src/filters/select_content)
+ADD_SUBDIRECTORY(src/filters/page_layout)
+ADD_SUBDIRECTORY(src/filters/output)
 
 SET(resource_sources)
 qt5_add_resources(resource_sources resources/resources.qrc)
@@ -425,130 +425,216 @@ IF(WIN32)
     SOURCE_GROUP("Resources" FILES resources/win32/resources.rc)
 ENDIF()
 
-SET(
-    common_sources
-    BackgroundExecutor.cpp BackgroundExecutor.h
-    OpenGLSupport.cpp OpenGLSupport.h
-    PixmapRenderer.cpp PixmapRenderer.h
-    BubbleAnimation.cpp BubbleAnimation.h
-    ProcessingIndicationWidget.cpp ProcessingIndicationWidget.h
-    NonOwningWidget.cpp NonOwningWidget.h
-    Dpi.cpp Dpi.h Dpm.cpp Dpm.h
-    SmartFilenameOrdering.cpp SmartFilenameOrdering.h
-    AbstractRelinker.h
-    RelinkablePath.cpp RelinkablePath.h
-    ImageInfo.cpp ImageInfo.h
-    ImageFileInfo.cpp ImageFileInfo.h
-    ImageMetadata.cpp ImageMetadata.h
-    RecentProjects.cpp RecentProjects.h
-    OutOfMemoryHandler.cpp OutOfMemoryHandler.h
-    CommandLine.cpp CommandLine.h
-    PageSelectionAccessor.cpp PageSelectionAccessor.h
-    PageSelectionProvider.h
-    ContentSpanFinder.cpp ContentSpanFinder.h
-    PhysicalTransformation.cpp PhysicalTransformation.h
-    ImageTransformation.cpp ImageTransformation.h
-    ImagePixmapUnion.h
-    ImageViewBase.cpp ImageViewBase.h
-    BasicImageView.cpp BasicImageView.h
-    StageListView.cpp StageListView.h
-    SkinnedButton.cpp SkinnedButton.h
-    DebugImageView.cpp DebugImageView.h
-    TabbedDebugImages.cpp TabbedDebugImages.h
-    ThumbnailLoadResult.h
-    ThumbnailPixmapCache.cpp ThumbnailPixmapCache.h
-    ThumbnailBase.cpp ThumbnailBase.h
-    ThumbnailFactory.cpp ThumbnailFactory.h
-    IncompleteThumbnail.cpp IncompleteThumbnail.h
-    ContentBoxPropagator.cpp ContentBoxPropagator.h
-    PageOrientationPropagator.cpp PageOrientationPropagator.h
-    DebugImages.cpp DebugImages.h
-    ImageId.cpp ImageId.h
-    PageId.cpp PageId.h
-    PageInfo.cpp PageInfo.h
-    BackgroundTask.cpp BackgroundTask.h
-    ProcessingTaskQueue.cpp ProcessingTaskQueue.h
-    PageSequence.cpp PageSequence.h
-    StageSequence.cpp StageSequence.h
-    ProjectPages.cpp ProjectPages.h
-    FilterData.cpp FilterData.h
-    ImageMetadataLoader.cpp ImageMetadataLoader.h
-    TiffReader.cpp TiffReader.h
-    TiffWriter.cpp TiffWriter.h
-    PngMetadataLoader.cpp PngMetadataLoader.h
-    TiffMetadataLoader.cpp TiffMetadataLoader.h
-    JpegMetadataLoader.cpp JpegMetadataLoader.h
-    ImageLoader.cpp ImageLoader.h
-    ErrorWidget.cpp ErrorWidget.h
-    OrthogonalRotation.cpp OrthogonalRotation.h
-    WorkerThread.cpp WorkerThread.h
-    LoadFileTask.cpp LoadFileTask.h
-    FilterOptionsWidget.cpp FilterOptionsWidget.h
-    TaskStatus.h FilterUiInterface.h
-    ProjectReader.cpp ProjectReader.h
-    ProjectWriter.cpp ProjectWriter.h
-    XmlMarshaller.cpp XmlMarshaller.h
-    XmlUnmarshaller.cpp XmlUnmarshaller.h
-    AtomicFileOverwriter.cpp AtomicFileOverwriter.h
-    EstimateBackground.cpp EstimateBackground.h
-    Despeckle.cpp Despeckle.h
-    ThreadPriority.cpp ThreadPriority.h
-    FileNameDisambiguator.cpp FileNameDisambiguator.h
-    OutputFileNameGenerator.cpp OutputFileNameGenerator.h
-    PageRange.cpp PageRange.h
-    SelectedPage.cpp SelectedPage.h
-    Utils.cpp Utils.h
-    PageView.h
-    AutoManualMode.h
-    AbstractCommand.h
-    AbstractFilter.h
-    BeforeOrAfter.h
-    FilterResult.h
-    CompositeCacheDrivenTask.h
-    Margins.h
-    ChangedStateItemDelegate.h
-    PageOrderProvider.h
-    PageOrderOption.h
-    PayloadEvent.h
-    filter_dc/AbstractFilterDataCollector.h
-    filter_dc/ThumbnailCollector.h
-    filter_dc/ContentBoxCollector.h
-    filter_dc/PageOrientationCollector.h
-    version.h
+SET(common_sources
+    src/BackgroundExecutor.cpp
+    src/BackgroundExecutor.h
+    src/OpenGLSupport.cpp
+    src/OpenGLSupport.h
+    src/PixmapRenderer.cpp
+    src/PixmapRenderer.h
+    src/BubbleAnimation.cpp
+    src/BubbleAnimation.h
+    src/ProcessingIndicationWidget.cpp
+    src/ProcessingIndicationWidget.h
+    src/NonOwningWidget.cpp
+    src/NonOwningWidget.h
+    src/Dpi.cpp
+    src/Dpi.h
+    src/Dpm.cpp
+    src/Dpm.h
+    src/SmartFilenameOrdering.cpp
+    src/SmartFilenameOrdering.h
+    src/AbstractRelinker.h
+    src/RelinkablePath.cpp
+    src/RelinkablePath.h
+    src/ImageInfo.cpp
+    src/ImageInfo.h
+    src/ImageFileInfo.cpp
+    src/ImageFileInfo.h
+    src/ImageMetadata.cpp
+    src/ImageMetadata.h
+    src/RecentProjects.cpp
+    src/RecentProjects.h
+    src/OutOfMemoryHandler.cpp
+    src/OutOfMemoryHandler.h
+    src/CommandLine.cpp
+    src/CommandLine.h
+    src/PageSelectionAccessor.cpp
+    src/PageSelectionAccessor.h
+    src/PageSelectionProvider.h
+    src/ContentSpanFinder.cpp
+    src/ContentSpanFinder.h
+    src/PhysicalTransformation.cpp
+    src/PhysicalTransformation.h
+    src/ImageTransformation.cpp
+    src/ImageTransformation.h
+    src/ImagePixmapUnion.h
+    src/ImageViewBase.cpp
+    src/ImageViewBase.h
+    src/BasicImageView.cpp
+    src/BasicImageView.h
+    src/StageListView.cpp
+    src/StageListView.h
+    src/SkinnedButton.cpp
+    src/SkinnedButton.h
+    src/DebugImageView.cpp
+    src/DebugImageView.h
+    src/TabbedDebugImages.cpp
+    src/TabbedDebugImages.h
+    src/ThumbnailLoadResult.h
+    src/ThumbnailPixmapCache.cpp
+    src/ThumbnailPixmapCache.h
+    src/ThumbnailBase.cpp
+    src/ThumbnailBase.h
+    src/ThumbnailFactory.cpp
+    src/ThumbnailFactory.h
+    src/IncompleteThumbnail.cpp
+    src/IncompleteThumbnail.h
+    src/ContentBoxPropagator.cpp
+    src/ContentBoxPropagator.h
+    src/PageOrientationPropagator.cpp
+    src/PageOrientationPropagator.h
+    src/DebugImages.cpp
+    src/DebugImages.h
+    src/ImageId.cpp
+    src/ImageId.h
+    src/PageId.cpp
+    src/PageId.h
+    src/PageInfo.cpp
+    src/PageInfo.h
+    src/BackgroundTask.cpp
+    src/BackgroundTask.h
+    src/ProcessingTaskQueue.cpp
+    src/ProcessingTaskQueue.h
+    src/PageSequence.cpp
+    src/PageSequence.h
+    src/StageSequence.cpp
+    src/StageSequence.h
+    src/ProjectPages.cpp
+    src/ProjectPages.h
+    src/FilterData.cpp
+    src/FilterData.h
+    src/ImageMetadataLoader.cpp
+    src/ImageMetadataLoader.h
+    src/TiffReader.cpp
+    src/TiffReader.h
+    src/TiffWriter.cpp
+    src/TiffWriter.h
+    src/PngMetadataLoader.cpp
+    src/PngMetadataLoader.h
+    src/TiffMetadataLoader.cpp
+    src/TiffMetadataLoader.h
+    src/JpegMetadataLoader.cpp
+    src/JpegMetadataLoader.h
+    src/ImageLoader.cpp
+    src/ImageLoader.h
+    src/ErrorWidget.cpp
+    src/ErrorWidget.h
+    src/OrthogonalRotation.cpp
+    src/OrthogonalRotation.h
+    src/WorkerThread.cpp
+    src/WorkerThread.h
+    src/LoadFileTask.cpp
+    src/LoadFileTask.h
+    src/FilterOptionsWidget.cpp
+    src/FilterOptionsWidget.h
+    src/TaskStatus.h
+    src/FilterUiInterface.h
+    src/ProjectReader.cpp
+    src/ProjectReader.h
+    src/ProjectWriter.cpp
+    src/ProjectWriter.h
+    src/XmlMarshaller.cpp
+    src/XmlMarshaller.h
+    src/XmlUnmarshaller.cpp
+    src/XmlUnmarshaller.h
+    src/AtomicFileOverwriter.cpp
+    src/AtomicFileOverwriter.h
+    src/EstimateBackground.cpp
+    src/EstimateBackground.h
+    src/Despeckle.cpp
+    src/Despeckle.h
+    src/ThreadPriority.cpp
+    src/ThreadPriority.h
+    src/FileNameDisambiguator.cpp
+    src/FileNameDisambiguator.h
+    src/OutputFileNameGenerator.cpp
+    src/OutputFileNameGenerator.h
+    src/PageRange.cpp
+    src/PageRange.h
+    src/SelectedPage.cpp
+    src/SelectedPage.h
+    src/Utils.cpp
+    src/Utils.h
+    src/PageView.h
+    src/AutoManualMode.h
+    src/AbstractCommand.h
+    src/AbstractFilter.h
+    src/BeforeOrAfter.h
+    src/FilterResult.h
+    src/CompositeCacheDrivenTask.h
+    src/Margins.h
+    src/ChangedStateItemDelegate.h
+    src/PageOrderProvider.h
+    src/PageOrderOption.h
+    src/PayloadEvent.h
+    src/filter_dc/AbstractFilterDataCollector.h
+    src/filter_dc/ThumbnailCollector.h
+    src/filter_dc/ContentBoxCollector.h
+    src/filter_dc/PageOrientationCollector.h
+    src/version.h
     config.h.in
     ${common_ui_files}
 )
 
-SET(
-    gui_only_sources
-    Application.cpp Application.h
-    RelinkablePathVisualization.cpp RelinkablePathVisualization.h
-    RelinkingModel.cpp RelinkingModel.h
-    RelinkingSortingModel.cpp RelinkingSortingModel.h
-    RelinkingListView.cpp RelinkingListView.h
-    RelinkingDialog.cpp RelinkingDialog.h
-    SettingsDialog.cpp SettingsDialog.h
-    FixDpiDialog.cpp FixDpiDialog.h
-    LoadFilesStatusDialog.cpp LoadFilesStatusDialog.h
-    ProjectCreationContext.cpp ProjectCreationContext.h
-    ProjectOpeningContext.cpp ProjectOpeningContext.h
-    OutOfMemoryDialog.cpp OutOfMemoryDialog.h
-    ThumbnailSequence.cpp ThumbnailSequence.h
-    ProjectFilesDialog.cpp ProjectFilesDialog.h
-    NewOpenProjectPanel.cpp NewOpenProjectPanel.h
-    SystemLoadWidget.cpp SystemLoadWidget.h
-    MainWindow.cpp MainWindow.h
-    main.cpp
+SET(gui_only_sources
+    src/Application.cpp
+    src/Application.h
+    src/SkinnedButton.cpp
+    src/SkinnedButton.h
+    src/RelinkablePathVisualization.cpp
+    src/RelinkablePathVisualization.h
+    src/RelinkingModel.cpp
+    src/RelinkingModel.h
+    src/RelinkingSortingModel.cpp
+    src/RelinkingSortingModel.h
+    src/RelinkingListView.cpp
+    src/RelinkingListView.h
+    src/RelinkingDialog.cpp
+    src/RelinkingDialog.h
+    src/SettingsDialog.cpp
+    src/SettingsDialog.h
+    src/FixDpiDialog.cpp
+    src/FixDpiDialog.h
+    src/LoadFilesStatusDialog.cpp
+    src/LoadFilesStatusDialog.h
+    src/ProjectCreationContext.cpp
+    src/ProjectCreationContext.h
+    src/ProjectOpeningContext.cpp
+    src/ProjectOpeningContext.h
+    src/OutOfMemoryDialog.cpp
+    src/OutOfMemoryDialog.h
+    src/ThumbnailSequence.cpp
+    src/ThumbnailSequence.h
+    src/ProjectFilesDialog.cpp
+    src/ProjectFilesDialog.h
+    src/NewOpenProjectPanel.cpp
+    src/NewOpenProjectPanel.h
+    src/SystemLoadWidget.cpp
+    src/SystemLoadWidget.h
+    src/MainWindow.cpp
+    src/MainWindow.h
+    src/main.cpp
 )
 
-SET(
-    cli_only_sources
-    ConsoleBatch.cpp ConsoleBatch.h
-    main-cli.cpp
+SET(cli_only_sources
+    src/ConsoleBatch.cpp
+    src/ConsoleBatch.h
+    src/main-cli.cpp
 )
 
 SOURCE_GROUP("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
-SOURCE_GROUP("Special Headers" FILES version.h config.h.in)
+SOURCE_GROUP("Special Headers" FILES src/version.h config.h.in)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
     # There seems to be a bug in either gcc or boost that makes page sorting either crash
@@ -556,8 +642,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     # gcc 4.4.3 and gcc 4.4.4.  It's not reproducible on gcc 4.5.1.
     # Adding -fno-strict-aliasing seems to fix it.
     SET_SOURCE_FILES_PROPERTIES(
-    	ThumbnailSequence.cpp PROPERTIES
-    	COMPILE_FLAGS "-fno-strict-aliasing"
+        src/ThumbnailSequence.cpp PROPERTIES
+        COMPILE_FLAGS "-fno-strict-aliasing"
     )
 ENDIF()
 
@@ -566,21 +652,21 @@ IF(WIN32)
     SET(rc_file "${CMAKE_SOURCE_DIR}/resources/win32/resources.rc")
     FILE(GLOB win32_resources resources/win32/*.ico)
     SET_SOURCE_FILES_PROPERTIES(
-    	"${rc_file}" PROPERTIES
-    	OBJECT_DEPENDS ${win32_resources}
+        "${rc_file}" PROPERTIES
+        OBJECT_DEPENDS ${win32_resources}
     )
     IF(MINGW)
-    	# CMake doesn't know how to process .rc files with MinGW.
-    	SET(win32_resource_file "${CMAKE_BINARY_DIR}/win32_resources.o")
-    	ADD_CUSTOM_COMMAND(
-    		OUTPUT "${win32_resource_file}"
-    		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/win32"
-    		COMMAND windres -i "${rc_file}" -o "${win32_resource_file}"
-    		MAIN_DEPENDENCY "${rc_file}"
-    		DEPENDS ${win32_resources}
-    	)
+        # CMake doesn't know how to process .rc files with MinGW.
+        SET(win32_resource_file "${CMAKE_BINARY_DIR}/win32_resources.o")
+        ADD_CUSTOM_COMMAND(
+            OUTPUT "${win32_resource_file}"
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/win32"
+            COMMAND windres -i "${rc_file}" -o "${win32_resource_file}"
+            MAIN_DEPENDENCY "${rc_file}"
+            DEPENDS ${win32_resources}
+        )
     ELSE(MINGW)
-    	SET(win32_resource_file "${rc_file}")
+        SET(win32_resource_file "${rc_file}")
     ENDIF(MINGW)
 ENDIF(WIN32)
 
@@ -615,25 +701,25 @@ INSTALL(TARGETS scantailor scantailor-cli RUNTIME DESTINATION bin)
 
 IF(ENABLE_CRASH_REPORTER)
     FIND_PATH(
-    	SYMBOLS_PATH . PATHS "${build_outer_dir}/symbols"
-    	"${source_outer_dir}/symbols" NO_DEFAULT_PATH
-    	DOC "The directory to write symbol information into."
+        SYMBOLS_PATH . PATHS "${build_outer_dir}/symbols"
+        "${source_outer_dir}/symbols" NO_DEFAULT_PATH
+        DOC "The directory to write symbol information into."
     )
     IF(NOT SYMBOLS_PATH)
-    	MESSAGE(FATAL_ERROR "SYMBOLS_PATH directory is not set.")
+        MESSAGE(FATAL_ERROR "SYMBOLS_PATH directory is not set.")
     ENDIF(NOT SYMBOLS_PATH)
 
     # We can't build it, because it requires ATL, which is not part
     # of the Visual Studio Express Edition, so we rely on a pre-built
     # version which can be found in the Mozilla repository.
     FIND_PROGRAM(
-    	DUMP_SYMS_EXECUTABLE dump_syms PATHS "${build_outer_dir}" "${source_outer_dir}"
-    	DOC "Path to dump_syms.exe, which can be found in Mozilla repository."
+        DUMP_SYMS_EXECUTABLE dump_syms PATHS "${build_outer_dir}" "${source_outer_dir}"
+        DOC "Path to dump_syms.exe, which can be found in Mozilla repository."
     )
     IF(NOT DUMP_SYMS_EXECUTABLE)
-    	MESSAGE(
-    		FATAL_ERROR "dump_syms.exe wasn't found.  Specify its location manually by setting the DUMP_SYMS_EXECUTABLE variable.  dump_syms.exe may be found in the Mozilla repository under /toolkit/crashreporter/tools/win32"
-    	)
+        MESSAGE(
+            FATAL_ERROR "dump_syms.exe wasn't found.  Specify its location manually by setting the DUMP_SYMS_EXECUTABLE variable.  dump_syms.exe may be found in the Mozilla repository under /toolkit/crashreporter/tools/win32"
+        )
     ENDIF(NOT DUMP_SYMS_EXECUTABLE)
 
     INCLUDE_DIRECTORIES(crash_reporter crash_reporter/google-breakpad)
@@ -662,9 +748,9 @@ ENDIF(ENABLE_CRASH_REPORTER)
 SET(FILTERED_TRANSLATION_FILES)
 FOREACH(ts_file ${ts_files})
     IF ("${ts_file}" MATCHES ".*untranslated.ts")
-    	# Just skip it.
+        # Just skip it.
     ELSE("${ts_file}" MATCHES ".*untranslated.ts")
-    	LIST(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
+        LIST(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
     ENDIF("${ts_file}" MATCHES ".*untranslated.ts")
 ENDFOREACH(ts_file)
 qt5_add_translation(QM_FILES ${FILTERED_TRANSLATION_FILES})
@@ -673,8 +759,8 @@ ADD_CUSTOM_TARGET(compile_translations ALL DEPENDS ${QM_FILES})
 INSTALL(FILES ${QM_FILES} DESTINATION "${TRANSLATIONS_DIR_REL}/")
 
 # Tests
-ADD_TEST(ImageProcTests imageproc/tests/imageproc_tests --log_level=message)
-ADD_TEST(ScanTaylorTests tests/tests --log_level=message)
+ADD_TEST(ImageProcTests src/imageproc/tests/imageproc_tests --log_level=message)
+ADD_TEST(ScanTaylorTests src/tests/tests --log_level=message)
 
 # Source code packaging
 SET(CPACK_CMAKE_GENERATOR "")
@@ -697,50 +783,50 @@ IF(WIN32)
     # Copy some DLLs to the staging dir.
     
     IF(MINGW)
-    	CHECK_CXX_ACCEPTS_FLAG("-m64" MINGW64)
-    	IF(NOT MINGW64)
-    		FIND_FILE(
-    			MINGWM10_DLL mingwm10.dll
-    			PATHS c:/MinGW/bin ENV PATH
-    			DOC "Full path to mingwm10.dll"
-    		)
-    		IF(NOT MINGWM10_DLL)
-    			MESSAGE(
-    				FATAL_ERROR
-    				"Could not find mingwm10.dll\n"
-    				"It shou 'bin' subdirectory of your MinGW installation."
-    			)
-    		ENDIF(NOT MINGWM10_DLL)
-    		COPY_TO_BUILD_DIR("${MINGWM10_DLL}")
+        CHECK_CXX_ACCEPTS_FLAG("-m64" MINGW64)
+        IF(NOT MINGW64)
+            FIND_FILE(
+                MINGWM10_DLL mingwm10.dll
+                PATHS c:/MinGW/bin ENV PATH
+                DOC "Full path to mingwm10.dll"
+            )
+            IF(NOT MINGWM10_DLL)
+                MESSAGE(
+                    FATAL_ERROR
+                    "Could not find mingwm10.dll\n"
+                    "It shou 'bin' subdirectory of your MinGW installation."
+                )
+            ENDIF(NOT MINGWM10_DLL)
+            COPY_TO_BUILD_DIR("${MINGWM10_DLL}")
 
-    		FIND_FILE(
-    			GCC_DW2_DLL libgcc_s_dw2-1.dll
-    			PATHS c:/MinGW/bin ENV PATH
-    			DOC "Full path to libgcc_s_dw2-1.dll"
-    		)
-    		IF(NOT GCC_DW2_DLL)
-    			SET(GCC_DW2_DLL "") # For NSIS
-    			MESSAGE(
-    				"Could not find libgcc_s_dw2-1.dll\n"
-    				"That's fine if your MinGW is old and just doesn't have it."
-    			)
-    		ELSE()
-    			COPY_TO_BUILD_DIR("${GCC_DW2_DLL}")
-    		ENDIF()
-    	ENDIF(NOT MINGW64)
+            FIND_FILE(
+                GCC_DW2_DLL libgcc_s_dw2-1.dll
+                PATHS c:/MinGW/bin ENV PATH
+                DOC "Full path to libgcc_s_dw2-1.dll"
+            )
+            IF(NOT GCC_DW2_DLL)
+                SET(GCC_DW2_DLL "") # For NSIS
+                MESSAGE(
+                    "Could not find libgcc_s_dw2-1.dll\n"
+                    "That's fine if your MinGW is old and just doesn't have it."
+                )
+            ELSE()
+                COPY_TO_BUILD_DIR("${GCC_DW2_DLL}")
+            ENDIF()
+        ENDIF(NOT MINGW64)
     ENDIF(MINGW)
     
 # Qt 5: deploy runtime libraries and plugins next to the GUI executable.
     if(TARGET Qt5::qmake)
-    	get_target_property(_qmake_loc Qt5::qmake IMPORTED_LOCATION)
-    	get_filename_component(QT_BIN_DIR "${_qmake_loc}" DIRECTORY)
+        get_target_property(_qmake_loc Qt5::qmake IMPORTED_LOCATION)
+        get_filename_component(QT_BIN_DIR "${_qmake_loc}" DIRECTORY)
     endif()
     find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
     if(WINDEPLOYQT_EXECUTABLE)
-    	add_custom_command(TARGET scantailor POST_BUILD
-    		COMMAND "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:scantailor>"
-    			--no-translations --no-system-d3d-compiler
-    		VERBATIM)
+        add_custom_command(TARGET scantailor POST_BUILD
+            COMMAND "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:scantailor>"
+                --no-translations --no-system-d3d-compiler
+            VERBATIM)
     endif()
     
     # Generate the target that will actually do the copying (e.g. MinGW support DLLs above).
