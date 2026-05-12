@@ -64,7 +64,7 @@ ThumbnailBase::ThumbnailBase(
     IntrusivePtr<ThumbnailPixmapCache> const& thumbnail_cache,
     QSizeF const& max_size, ImageId const& image_id,
     ImageTransformation const& image_xform)
-    :	m_ptrThumbnailCache(thumbnail_cache),
+    :   m_ptrThumbnailCache(thumbnail_cache),
       m_maxSize(max_size),
       m_imageId(image_id),
       m_imageXform(image_xform),
@@ -154,7 +154,7 @@ ThumbnailBase::paint(QPainter* painter,
     QString const cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
     if (!QPixmapCache::find(cache_key, temp_pixmap)
             || temp_pixmap.width() < display_rect.width()
-            || temp_pixmap.height() < display_rect.width())
+            || temp_pixmap.height() < display_rect.height())
     {
         int w = (int)display_rect.width();
         int h = (int)display_rect.height();

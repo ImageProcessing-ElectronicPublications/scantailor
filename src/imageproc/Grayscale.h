@@ -1,6 +1,6 @@
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ GrayImage createFramedImage(
  *        be returned as the darkest image.  If it's not grayscale,
  *        a grayscale copy will be created.
  */
-unsigned char darkestGrayLevel(QImage const& image);
+unsigned char darkestGrayLevel(GrayImage const& image);
 
 } // namespace imageproc
 

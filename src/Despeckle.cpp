@@ -1,6 +1,6 @@
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -929,7 +929,13 @@ Despeckle::despeckleInPlace(
     bool have_anchored_to_small_but_not_big = false;
     BOOST_FOREACH(Component const& comp, components)
     {
-        have_anchored_to_small_but_not_big = comp.anchoredToSmallButNotBig();
+        // have_anchored_to_small_but_not_big = comp.anchoredToSmallButNotBig();
+        // fix @trufanov-nok
+        if (comp.anchoredToSmallButNotBig())
+        {
+            have_anchored_to_small_but_not_big = true;
+            break;
+        }
     }
 
     if (have_anchored_to_small_but_not_big)
