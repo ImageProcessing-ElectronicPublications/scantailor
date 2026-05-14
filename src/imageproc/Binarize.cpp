@@ -41,18 +41,27 @@ BinaryImage binarizeOtsu(QImage const& src)
 }
 
 BinaryImage binarizeMokji(
-    QImage const& src, unsigned const max_edge_width,
+    QImage const& src,
+    unsigned const max_edge_width,
     unsigned const min_edge_magnitude)
 {
     BinaryThreshold const threshold(
         BinaryThreshold::mokjiThreshold(
-            src, max_edge_width, min_edge_magnitude
+            src,
+            max_edge_width,
+            min_edge_magnitude
         )
     );
     return BinaryImage(src, threshold);
 }
 
-BinaryImage binarizeSauvola(QImage const& src, QSize const window_size)
+BinaryImage binarizeSauvola(
+    QImage const& src,
+    QSize const window_size,
+    double const coef,
+    int const delta,
+    unsigned char const lower_bound,
+    unsigned char const upper_bound)
 {
     if (window_size.isEmpty())
     {
@@ -95,6 +104,9 @@ BinaryImage binarizeSauvola(QImage const& src, QSize const window_size)
     uint32_t* bw_line = bw_img.data();
     int const bw_wpl = bw_img.wordsPerLine();
 
+    double const range = 128.0;
+    double const adj_d = (double) delta / range;
+
     gray_line = gray.bits();
     for (int y = 0; y < h; ++y)
     {
@@ -119,12 +131,14 @@ BinaryImage binarizeSauvola(QImage const& src, QSize const window_size)
             double const variance = sqmean - mean * mean;
             double const deviation = sqrt(fabs(variance));
 
-            double const k = 0.34;
-            double const threshold = mean * (1.0 + k * (deviation / 128.0 - 1.0));
+            double const k = coef;
+            double const threshold = mean * (1.0 - k * (1.0 - deviation / range - adj_d));
 
             uint32_t const msb = uint32_t(1) << 31;
             uint32_t const mask = msb >> (x & 31);
-            if (int(gray_line[x]) < threshold)
+            if (gray_line[x] < lower_bound ||
+                    (gray_line[x] <= upper_bound &&
+                     int(gray_line[x]) < threshold))
             {
                 // black
                 bw_line[x >> 5] |= mask;
@@ -144,8 +158,12 @@ BinaryImage binarizeSauvola(QImage const& src, QSize const window_size)
 }
 
 BinaryImage binarizeWolf(
-    QImage const& src, QSize const window_size,
-    unsigned char const lower_bound, unsigned char const upper_bound)
+    QImage const& src,
+    QSize const window_size,
+    double const coef,
+    int const delta,
+    unsigned char const lower_bound,
+    unsigned char const upper_bound)
 {
     if (window_size.isEmpty())
     {
@@ -190,6 +208,8 @@ BinaryImage binarizeWolf(
     std::vector<float> means(w * h, 0);
     std::vector<float> deviations(w * h, 0);
 
+    double const range = 128.0;
+    double const adj_d = (double) delta / range;
     double max_deviation = 0;
 
     for (int y = 0; y < h; ++y)
@@ -233,8 +253,8 @@ BinaryImage binarizeWolf(
         {
             float const mean = means[y * w + x];
             float const deviation = deviations[y * w + x];
-            double const k = 0.3;
-            double const a = 1.0 - deviation / max_deviation;
+            double const k = coef;
+            double const a = 1.0 - deviation / max_deviation - adj_d;
             double const threshold = mean - k * a * (mean - min_gray_level);
 
             uint32_t const msb = uint32_t(1) << 31;

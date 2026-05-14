@@ -64,7 +64,8 @@ public:
      */
     static BinaryThreshold mokjiThreshold(
         QImage const& image,
-        unsigned max_edge_width = 3, unsigned min_edge_magnitude = 20);
+        unsigned max_edge_width = 3,
+        unsigned min_edge_magnitude = 20);
 
     explicit BinaryThreshold(int threshold) : m_threshold(threshold) {}
 

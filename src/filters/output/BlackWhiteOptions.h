@@ -35,7 +35,17 @@ public:
 
     QDomElement toXml(QDomDocument& doc, QString const& name) const;
 
-    int thresholdAdjustment() const
+    int getThresholdMethod() const
+    {
+        return m_thresholdMethod;
+    }
+
+    void setThresholdMethod(int val)
+    {
+        m_thresholdMethod = val;
+    }
+
+    int getThresholdAdjustment() const
     {
         return m_thresholdAdjustment;
     }
@@ -45,11 +55,34 @@ public:
         m_thresholdAdjustment = val;
     }
 
+    int getThresholdRadius() const
+    {
+        return m_thresholdRadius;
+    }
+
+    void setThresholdRadius(int val)
+    {
+        m_thresholdRadius = val;
+    }
+
+    int getThresholdCoef() const
+    {
+        return m_thresholdCoef;
+    }
+
+    void setThresholdCoef(int val)
+    {
+        m_thresholdCoef = val;
+    }
+
     bool operator==(BlackWhiteOptions const& other) const;
 
     bool operator!=(BlackWhiteOptions const& other) const;
 private:
+    int m_thresholdMethod;
     int m_thresholdAdjustment;
+    int m_thresholdRadius;
+    double m_thresholdCoef;
 };
 
 } // namespace output

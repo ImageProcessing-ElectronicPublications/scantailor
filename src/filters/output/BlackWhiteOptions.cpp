@@ -25,12 +25,18 @@ namespace output
 {
 
 BlackWhiteOptions::BlackWhiteOptions()
-    :	m_thresholdAdjustment(0)
+    : m_thresholdMethod(0)
+    , m_thresholdAdjustment(0)
+    , m_thresholdRadius(50)
+    , m_thresholdCoef(0.3)
 {
 }
 
 BlackWhiteOptions::BlackWhiteOptions(QDomElement const& el)
-    :	m_thresholdAdjustment(el.attribute("thresholdAdj").toInt())
+    : m_thresholdMethod(el.attribute("thresholdMethod").toInt())
+    , m_thresholdAdjustment(el.attribute("thresholdAdj").toInt())
+    , m_thresholdRadius(el.attribute("thresholdRadius").toInt())
+    , m_thresholdCoef(el.attribute("thresholdCoef").toDouble())
 {
 }
 
@@ -38,14 +44,29 @@ QDomElement
 BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const
 {
     QDomElement el(doc.createElement(name));
+    el.setAttribute("thresholdMethod", m_thresholdMethod);
     el.setAttribute("thresholdAdj", m_thresholdAdjustment);
+    el.setAttribute("thresholdRadius", m_thresholdRadius);
+    el.setAttribute("thresholdCoef", m_thresholdCoef);
     return el;
 }
 
 bool
 BlackWhiteOptions::operator==(BlackWhiteOptions const& other) const
 {
+    if (m_thresholdMethod != other.m_thresholdMethod)
+    {
+        return false;
+    }
     if (m_thresholdAdjustment != other.m_thresholdAdjustment)
+    {
+        return false;
+    }
+    if (m_thresholdRadius != other.m_thresholdRadius)
+    {
+        return false;
+    }
+    if (m_thresholdCoef != other.m_thresholdCoef)
     {
         return false;
     }

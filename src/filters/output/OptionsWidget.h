@@ -85,6 +85,8 @@ private slots:
 
     void colorModeChanged(int idx);
 
+    void thresholdMethodChanged(int idx);
+
     void whiteMarginsToggled(bool checked);
 
     void equalizeIlluminationToggled(bool checked);

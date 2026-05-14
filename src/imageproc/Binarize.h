@@ -50,7 +50,8 @@ BinaryImage binarizeOtsu(QImage const& src);
  * \return A black and white image.
  */
 BinaryImage binarizeMokji(
-    QImage const& src, unsigned max_edge_width = 3,
+    QImage const& src,
+    unsigned max_edge_width = 3,
     unsigned min_edge_magnitude = 20);
 
 /**
@@ -59,7 +60,13 @@ BinaryImage binarizeMokji(
  * Sauvola, J. and M. Pietikainen. 2000. "Adaptive document image binarization".
  * http://www.mediateam.oulu.fi/publications/pdf/24.pdf
  */
-BinaryImage binarizeSauvola(QImage const& src, QSize window_size);
+BinaryImage binarizeSauvola(
+    QImage const& src,
+    QSize window_size,
+    double coef = 0.34,
+    int delta = 0,
+    unsigned char lower_bound = 1,
+    unsigned char upper_bound = 254);
 
 /**
  * \brief Image binarization using Wolf's local thresholding method.
@@ -74,8 +81,12 @@ BinaryImage binarizeSauvola(QImage const& src, QSize window_size);
  * \param upper_bound The maximum possible gray level that can be made black.
  */
 BinaryImage binarizeWolf(
-    QImage const& src, QSize window_size,
-    unsigned char lower_bound = 1, unsigned char upper_bound = 254);
+    QImage const& src,
+    QSize window_size,
+    double coef = 0.3,
+    int delta = 0,
+    unsigned char lower_bound = 1,
+    unsigned char upper_bound = 254);
 
 } // namespace imageproc
 

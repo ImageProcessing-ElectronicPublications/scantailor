@@ -1,6 +1,6 @@
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-	Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -98,7 +98,8 @@ BinaryThreshold::otsuThreshold(GrayscaleHistogram const& pixels_by_color)
 
 BinaryThreshold
 BinaryThreshold::mokjiThreshold(
-    QImage const& image, unsigned const max_edge_width,
+    QImage const& image,
+    unsigned const max_edge_width,
     unsigned const min_edge_magnitude)
 {
     if (max_edge_width < 1)
@@ -112,7 +113,7 @@ BinaryThreshold::mokjiThreshold(
 
     GrayImage const gray(image);
 
-    int const dilate_size = (max_edge_width + 1) * 2 - 1;
+    int const dilate_size = max_edge_width + 1 + max_edge_width;
     GrayImage dilated(dilateGray(gray, QSize(dilate_size, dilate_size)));
 
     unsigned matrix[256][256];
@@ -155,13 +156,13 @@ BinaryThreshold::mokjiThreshold(
         }
     }
 
-    if (denominator == 0)
+    int threshold = 128;
+    if (denominator > 0)
     {
-        return BinaryThreshold(128);
+        threshold = (nominator + denominator) / denominator / 2;
     }
 
-    double const threshold = 0.5 * nominator / denominator;
-    return BinaryThreshold((int)(threshold + 0.5));
+    return BinaryThreshold(threshold);
 }
 
 } // namespace imageproc

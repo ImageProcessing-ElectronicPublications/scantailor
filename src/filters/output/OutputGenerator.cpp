@@ -16,6 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <assert.h>
+#include <string.h>
+#include <stdint.h>
+#include <vector>
+#include <memory>
+#include <new>
+#include <algorithm>
+#ifndef Q_MOC_RUN
+#include <boost/foreach.hpp>
+#include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
+#endif
+#include <QImage>
+#include <QSize>
+#include <QPoint>
+#include <QRect>
+#include <QRectF>
+#include <QPointF>
+#include <QPolygonF>
+#include <QPainter>
+#include <QPainterPath>
+#include <QColor>
+#include <QPen>
+#include <QBrush>
+#include <QtGlobal>
+#include <QDebug>
+#include <Qt>
+#include "config.h"
 #include "OutputGenerator.h"
 #include "ImageTransformation.h"
 #include "FilterData.h"
@@ -60,34 +88,6 @@
 #include "imageproc/PolygonRasterizer.h"
 #include "imageproc/ConnectivityMap.h"
 #include "imageproc/InfluenceMap.h"
-#include "config.h"
-#ifndef Q_MOC_RUN
-#include <boost/foreach.hpp>
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#endif
-#include <QImage>
-#include <QSize>
-#include <QPoint>
-#include <QRect>
-#include <QRectF>
-#include <QPointF>
-#include <QPolygonF>
-#include <QPainter>
-#include <QPainterPath>
-#include <QColor>
-#include <QPen>
-#include <QBrush>
-#include <QtGlobal>
-#include <QDebug>
-#include <Qt>
-#include <vector>
-#include <memory>
-#include <new>
-#include <algorithm>
-#include <assert.h>
-#include <string.h>
-#include <stdint.h>
 
 using namespace imageproc;
 using namespace dewarping;
@@ -204,7 +204,8 @@ void reserveBlackAndWhite(QImage& img)
  */
 template<typename MixedPixel>
 void combineMixed(
-    QImage& mixed, BinaryImage const& bw_content,
+    QImage& mixed,
+    BinaryImage const& bw_content,
     BinaryImage const& bw_mask)
 {
     MixedPixel* mixed_line = reinterpret_cast<MixedPixel*>(mixed.bits());
@@ -256,7 +257,7 @@ OutputGenerator::OutputGenerator(
     DespeckleLevel const despeckle_level,
     ImageTransformation const& xform,
     QPolygonF const& content_rect_phys)
-    :	m_dpi(dpi),
+    :   m_dpi(dpi),
       m_colorParams(color_params),
       m_xform(xform),
       m_outRect(xform.resultingRect().toRect()),
@@ -271,8 +272,10 @@ OutputGenerator::OutputGenerator(
 
 QImage
 OutputGenerator::process(
-    TaskStatus const& status, FilterData const& input,
-    ZoneSet const& picture_zones, ZoneSet const& fill_zones,
+    TaskStatus const& status,
+    FilterData const& input,
+    ZoneSet const& picture_zones,
+    ZoneSet const& fill_zones,
     DewarpingMode dewarping_mode,
     DistortionModel& distortion_model,
     DepthPerception const& depth_perception,
@@ -312,9 +315,12 @@ OutputGenerator::outputContentRect() const
 GrayImage
 OutputGenerator::normalizeIlluminationGray(
     TaskStatus const& status,
-    QImage const& input, QPolygonF const& area_to_consider,
-    QTransform const& xform, QRect const& target_rect,
-    GrayImage* background, DebugImages* const dbg)
+    QImage const& input,
+    QPolygonF const& area_to_consider,
+    QTransform const& xform,
+    QRect const& target_rect,
+    GrayImage* background,
+    DebugImages* const dbg)
 {
     GrayImage to_be_normalized(
         transformToGray(
@@ -363,8 +369,10 @@ OutputGenerator::normalizeIlluminationGray(
 
 imageproc::BinaryImage
 OutputGenerator::estimateBinarizationMask(
-    TaskStatus const& status, GrayImage const& gray_source,
-    QRect const& source_rect, QRect const& source_sub_rect,
+    TaskStatus const& status,
+    GrayImage const& gray_source,
+    QRect const& source_rect,
+    QRect const& source_sub_rect,
     DebugImages* const dbg) const
 {
     assert(source_rect.contains(source_sub_rect));
@@ -433,7 +441,8 @@ OutputGenerator::estimateBinarizationMask(
 void
 OutputGenerator::modifyBinarizationMask(
     imageproc::BinaryImage& bw_mask,
-    QRect const& mask_rect, ZoneSet const& zones) const
+    QRect const& mask_rect,
+    ZoneSet const& zones) const
 {
     QTransform xform(m_xform.transform());
     xform *= QTransform().translate(-mask_rect.x(), -mask_rect.y());
@@ -473,8 +482,10 @@ OutputGenerator::modifyBinarizationMask(
 
 QImage
 OutputGenerator::processImpl(
-    TaskStatus const& status, FilterData const& input,
-    ZoneSet const& picture_zones, ZoneSet const& fill_zones,
+    TaskStatus const& status,
+    FilterData const& input,
+    ZoneSet const& picture_zones,
+    ZoneSet const& fill_zones,
     DewarpingMode dewarping_mode,
     DistortionModel& distortion_model,
     DepthPerception const& depth_perception,
@@ -510,7 +521,8 @@ OutputGenerator::processImpl(
 
 QImage
 OutputGenerator::processAsIs(
-    FilterData const& input, TaskStatus const& status,
+    FilterData const& input,
+    TaskStatus const& status,
     ZoneSet const& fill_zones,
     DepthPerception const& depth_perception,
     DebugImages* const dbg) const
@@ -567,8 +579,10 @@ OutputGenerator::processAsIs(
 
 QImage
 OutputGenerator::processWithoutDewarping(
-    TaskStatus const& status, FilterData const& input,
-    ZoneSet const& picture_zones, ZoneSet const& fill_zones,
+    TaskStatus const& status,
+    FilterData const& input,
+    ZoneSet const& picture_zones,
+    ZoneSet const& fill_zones,
     imageproc::BinaryImage* auto_picture_mask,
     imageproc::BinaryImage* speckles_image,
     DebugImages* dbg) const
@@ -862,8 +876,10 @@ OutputGenerator::processWithoutDewarping(
 
 QImage
 OutputGenerator::processWithDewarping(
-    TaskStatus const& status, FilterData const& input,
-    ZoneSet const& picture_zones, ZoneSet const& fill_zones,
+    TaskStatus const& status,
+    FilterData const& input,
+    ZoneSet const& picture_zones,
+    ZoneSet const& fill_zones,
     DewarpingMode dewarping_mode,
     DistortionModel& distortion_model,
     DepthPerception const& depth_perception,
@@ -1325,7 +1341,8 @@ OutputGenerator::setupTrivialDistortionModel(DistortionModel& distortion_model) 
 CylindricalSurfaceDewarper
 OutputGenerator::createDewarper(
     DistortionModel const& distortion_model,
-    QTransform const& distortion_model_to_target, double depth_perception)
+    QTransform const& distortion_model_to_target,
+    double depth_perception)
 {
     if (distortion_model_to_target.isIdentity())
     {
@@ -1363,9 +1380,12 @@ OutputGenerator::createDewarper(
  */
 QImage
 OutputGenerator::dewarp(
-    QTransform const& orig_to_src, QImage const& src,
-    QTransform const& src_to_output, DistortionModel const& distortion_model,
-    DepthPerception const& depth_perception, QColor const& bg_color) const
+    QTransform const& orig_to_src,
+    QImage const& src,
+    QTransform const& src_to_output,
+    DistortionModel const& distortion_model,
+    DepthPerception const& depth_perception,
+    QColor const& bg_color) const
 {
     CylindricalSurfaceDewarper const dewarper(
         createDewarper(distortion_model, orig_to_src, depth_perception.value())
@@ -1391,7 +1411,9 @@ OutputGenerator::dewarp(
 }
 
 QSize
-OutputGenerator::from300dpi(QSize const& size, Dpi const& target_dpi)
+OutputGenerator::from300dpi(
+    QSize const& size,
+    Dpi const& target_dpi)
 {
     double const hscale = target_dpi.horizontal() / 300.0;
     double const vscale = target_dpi.vertical() / 300.0;
@@ -1401,7 +1423,9 @@ OutputGenerator::from300dpi(QSize const& size, Dpi const& target_dpi)
 }
 
 QSize
-OutputGenerator::to300dpi(QSize const& size, Dpi const& source_dpi)
+OutputGenerator::to300dpi(
+    QSize const& size,
+    Dpi const& source_dpi)
 {
     double const hscale = 300.0 / source_dpi.horizontal();
     double const vscale = 300.0 / source_dpi.vertical();
@@ -1421,7 +1445,9 @@ OutputGenerator::convertToRGBorRGBA(QImage const& src)
 
 void
 OutputGenerator::fillMarginsInPlace(
-    QImage& image, QPolygonF const& content_poly, QColor const& color)
+    QImage& image,
+    QPolygonF const& content_poly,
+    QColor const& color)
 {
     if (image.format() == QImage::Format_Indexed8 && image.isGrayscale())
     {
@@ -1460,7 +1486,8 @@ OutputGenerator::fillMarginsInPlace(
 
 GrayImage
 OutputGenerator::detectPictures(
-    GrayImage const& input_300dpi, TaskStatus const& status,
+    GrayImage const& input_300dpi,
+    TaskStatus const& status,
     DebugImages* const dbg)
 {
     // We stretch the range of gray levels to cover the whole
@@ -1543,7 +1570,9 @@ OutputGenerator::detectPictures(
 }
 
 QImage
-OutputGenerator::smoothToGrayscale(QImage const& src, Dpi const& dpi)
+OutputGenerator::smoothToGrayscale(
+    QImage const& src,
+    Dpi const& dpi)
 {
     int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
     int window;
@@ -1574,8 +1603,8 @@ OutputGenerator::smoothToGrayscale(QImage const& src, Dpi const& dpi)
 BinaryThreshold
 OutputGenerator::adjustThreshold(BinaryThreshold threshold) const
 {
-    int const adjusted = threshold +
-                         m_colorParams.blackWhiteOptions().thresholdAdjustment();
+    int const delta = m_colorParams.blackWhiteOptions().getThresholdAdjustment();
+    int const adjusted = threshold + delta;
 
     // Hard-bounding threshold values is necessary for example
     // if all the content went into the picture mask.
@@ -1584,7 +1613,8 @@ OutputGenerator::adjustThreshold(BinaryThreshold threshold) const
 
 BinaryThreshold
 OutputGenerator::calcBinarizationThreshold(
-    QImage const& image, BinaryImage const& mask) const
+    QImage const& image,
+    BinaryImage const& mask) const
 {
     GrayscaleHistogram hist(image, mask);
     return adjustThreshold(BinaryThreshold::otsuThreshold(hist));
@@ -1592,7 +1622,9 @@ OutputGenerator::calcBinarizationThreshold(
 
 BinaryThreshold
 OutputGenerator::calcBinarizationThreshold(
-    QImage const& image, QPolygonF const& crop_area, BinaryImage const* mask) const
+    QImage const& image,
+    QPolygonF const& crop_area,
+    BinaryImage const* mask) const
 {
     QPainterPath path;
     path.addPolygon(crop_area);
@@ -1617,12 +1649,52 @@ OutputGenerator::calcBinarizationThreshold(
 }
 
 BinaryImage
-OutputGenerator::binarize(QImage const& image, BinaryImage const& mask) const
+OutputGenerator::binarize(
+    QImage const& image,
+    BinaryImage const& mask) const
 {
-    GrayscaleHistogram hist(image, mask);
-    BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
-    BinaryImage binarized(image, adjustThreshold(bw_thresh));
-
+    BlackWhiteOptions const& black_white_options = m_colorParams.blackWhiteOptions();
+    BinaryImage binarized;
+    if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB))
+    {
+        binarized = BinaryImage(image);
+    }
+    else
+    {
+        int const threshold_method = black_white_options.getThresholdMethod();
+        int const threshold_delta = black_white_options.getThresholdAdjustment();
+        int const threshold_radius = black_white_options.getThresholdRadius();
+        double const threshold_coef = black_white_options.getThresholdCoef();
+ 
+        switch (threshold_method)
+        {
+        case 0: // Otsu
+        {
+            GrayscaleHistogram hist(image, mask);
+            BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
+            binarized = BinaryImage(image, adjustThreshold(bw_thresh));
+            break;
+        }
+        case 1: // Mokji
+        {
+            BinaryThreshold const bw_thresh(BinaryThreshold::mokjiThreshold(image, 3, 20));
+            binarized = BinaryImage(image, adjustThreshold(bw_thresh));
+            break;
+        }
+        case 2: // Sauvola
+        {
+            int ws = threshold_radius + 1 + threshold_radius;
+            binarized = binarizeSauvola(image, QSize(201, 201), 0.34, threshold_delta);
+            break;
+        }
+        case 3: // Wolf (Chistian)
+        {
+            int ws = threshold_radius + 1 + threshold_radius;
+            binarized = binarizeWolf(image, QSize(201, 201), 0.3, threshold_delta);
+            break;
+        }
+        }
+    }
     // Fill masked out areas with white.
     rasterOp<RopAnd<RopSrc, RopDst> >(binarized, mask);
 
@@ -1630,8 +1702,10 @@ OutputGenerator::binarize(QImage const& image, BinaryImage const& mask) const
 }
 
 BinaryImage
-OutputGenerator::binarize(QImage const& image,
-                          QPolygonF const& crop_area, BinaryImage const* mask) const
+OutputGenerator::binarize(
+    QImage const& image,
+    QPolygonF const& crop_area,
+    BinaryImage const* mask) const
 {
     QPainterPath path;
     path.addPolygon(crop_area);
@@ -1684,9 +1758,13 @@ OutputGenerator::binarize(QImage const& image,
 void
 OutputGenerator::maybeDespeckleInPlace(
     imageproc::BinaryImage& image,
-    QRect const& image_rect, QRect const& mask_rect,
-    DespeckleLevel const level, BinaryImage* speckles_img,
-    Dpi const& dpi, TaskStatus const& status, DebugImages* dbg) const
+    QRect const& image_rect,
+    QRect const& mask_rect,
+    DespeckleLevel const level,
+    BinaryImage* speckles_img,
+    Dpi const& dpi,
+    TaskStatus const& status,
+    DebugImages* dbg) const
 {
     QRect const src_rect(mask_rect.translated(-image_rect.topLeft()));
     QRect const dst_rect(mask_rect);
@@ -1739,7 +1817,8 @@ OutputGenerator::maybeDespeckleInPlace(
 
 void
 OutputGenerator::morphologicalSmoothInPlace(
-    BinaryImage& bin_img, TaskStatus const& status)
+    BinaryImage& bin_img,
+    TaskStatus const& status)
 {
     // When removing black noise, remove small ones first.
 
@@ -1822,8 +1901,10 @@ OutputGenerator::morphologicalSmoothInPlace(
 
 void
 OutputGenerator::hitMissReplaceAllDirections(
-    imageproc::BinaryImage& img, char const* const pattern,
-    int const pattern_width, int const pattern_height)
+    imageproc::BinaryImage& img,
+    char const* const pattern,
+    int const pattern_width,
+    int const pattern_height)
 {
     hitMissReplaceInPlace(img, WHITE, pattern, pattern_width, pattern_height);
 
@@ -1990,7 +2071,9 @@ OutputGenerator::applyFillZonesInPlace(
  * from original image to output image coordinates.
  */
 void
-OutputGenerator::applyFillZonesInPlace(QImage& img, ZoneSet const& zones) const
+OutputGenerator::applyFillZonesInPlace(
+    QImage& img,
+    ZoneSet const& zones) const
 {
     typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
     applyFillZonesInPlace(
@@ -2023,7 +2106,8 @@ OutputGenerator::applyFillZonesInPlace(
  */
 void
 OutputGenerator::applyFillZonesInPlace(
-    imageproc::BinaryImage& img, ZoneSet const& zones) const
+    imageproc::BinaryImage& img,
+    ZoneSet const& zones) const
 {
     typedef QPointF (QTransform::*MapPointFunc)(QPointF const&) const;
     applyFillZonesInPlace(
