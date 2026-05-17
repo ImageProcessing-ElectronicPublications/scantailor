@@ -55,6 +55,16 @@ public:
         m_thresholdAdjustment = val;
     }
 
+    bool getThresholdManual() const
+    {
+        return m_thresholdManual;
+    }
+
+    void setThresholdManual(bool val)
+    {
+        m_thresholdManual = val;
+    }
+
     int getThresholdRadius() const
     {
         return m_thresholdRadius;
@@ -65,15 +75,19 @@ public:
         m_thresholdRadius = val;
     }
 
-    int getThresholdCoef() const
+    double getThresholdCoef() const
     {
         return m_thresholdCoef;
     }
 
-    void setThresholdCoef(int val)
+    void setThresholdCoef(double val)
     {
         m_thresholdCoef = val;
     }
+
+    int getThresholdDefaultRadius() const;
+
+    double getThresholdDefaultCoef() const;
 
     bool operator==(BlackWhiteOptions const& other) const;
 
@@ -81,8 +95,13 @@ public:
 private:
     int m_thresholdMethod;
     int m_thresholdAdjustment;
+    bool m_thresholdManual;
     int m_thresholdRadius;
     double m_thresholdCoef;
+
+    static int parseThresholdMethod(QString const& str);
+
+    static QString formatThresholdMethod(int type);
 };
 
 } // namespace output

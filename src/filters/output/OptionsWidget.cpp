@@ -96,6 +96,18 @@ OptionsWidget::OptionsWidget(
         this, SLOT(thresholdMethodChanged(int))
     );
     connect(
+        thresholdManualCB, SIGNAL(clicked(bool)),
+        this, SLOT(thresholdManualToggled(bool))
+    );
+    connect(
+        thresholdRadius, SIGNAL(valueChanged(int)),
+        this, SLOT(thresholdRadiusChanged(int))
+    );
+    connect(
+        thresholdCoef, SIGNAL(valueChanged(double)),
+        this, SLOT(thresholdCoefChanged(double))
+    );
+    connect(
         whiteMarginsCB, SIGNAL(clicked(bool)),
         this, SLOT(whiteMarginsToggled(bool))
     );
@@ -242,8 +254,71 @@ OptionsWidget::thresholdMethodChanged(int const idx)
     opt.setThresholdMethod(method);
     m_colorParams.setBlackWhiteOptions(opt);
     m_ptrSettings->setColorParams(m_pageId, m_colorParams);
-    emit reloadRequested();
     emit invalidateThumbnail(m_pageId);
+    emit reloadRequested();
+}
+
+void
+OptionsWidget::thresholdManualToggled(bool const checked)
+{
+    BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+    if (opt.getThresholdManual() == checked)
+    {
+        // Didn't change.
+        return;
+    }
+    opt.setThresholdManual(checked);
+    thresholdRadius->setEnabled( false );
+    thresholdCoef->setEnabled( false );
+    if (!checked)
+    {
+        int const defRadius = opt.getThresholdDefaultRadius();
+        double const defCoef = opt.getThresholdDefaultCoef();
+        thresholdRadiusChanged(defRadius);
+        thresholdCoefChanged(defCoef);
+    }
+    else
+    {
+        if (opt.getThresholdMethod() > 0)
+        {
+            thresholdRadius->setEnabled( true );
+            thresholdCoef->setEnabled( true );
+        }
+    }
+    m_colorParams.setBlackWhiteOptions(opt);
+    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+}
+
+void
+OptionsWidget::thresholdRadiusChanged(int const value)
+{
+    BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+    if (opt.getThresholdRadius() == value)
+    {
+        // Didn't change.
+        return;
+    }
+    opt.setThresholdRadius(value);
+    m_colorParams.setBlackWhiteOptions(opt);
+    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+    emit invalidateThumbnail(m_pageId);
+    emit reloadRequested();
+}
+
+void
+OptionsWidget::thresholdCoefChanged(double const value)
+{
+    BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+    if (opt.getThresholdCoef() == value)
+    {
+        // Didn't change.
+        return;
+    }
+    opt.setThresholdCoef(value);
+    m_colorParams.setBlackWhiteOptions(opt);
+    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+    emit invalidateThumbnail(m_pageId);
+    emit reloadRequested();
 }
 
 void
@@ -714,13 +789,27 @@ OptionsWidget::updateColorsDisplay()
             break;
         }
 
+        BlackWhiteOptions black_white_options(m_colorParams.blackWhiteOptions());
         ScopedIncDec<int> const guard(m_ignoreThresholdChanges);
-        thresholdMethodSelector->setCurrentIndex(
-            m_colorParams.blackWhiteOptions().getThresholdMethod()
-        );
-        thresholdSlider->setValue(
-            m_colorParams.blackWhiteOptions().getThresholdAdjustment()
-        );
+        thresholdMethodSelector->setCurrentIndex(black_white_options.getThresholdMethod());
+        thresholdSlider->setValue(black_white_options.getThresholdAdjustment());
+        thresholdManualCB->setChecked(black_white_options.getThresholdManual());
+
+        thresholdRadius->setEnabled( false );
+        thresholdCoef->setEnabled( false );
+        if ((black_white_options.getThresholdManual()) && (black_white_options.getThresholdMethod() > 0))
+        {
+            thresholdRadius->setValue(black_white_options.getThresholdRadius());
+            thresholdCoef->setValue(black_white_options.getThresholdCoef());
+            thresholdRadius->setEnabled( true );
+            thresholdCoef->setEnabled( true );
+        }
+        else
+        {
+            thresholdRadius->setValue(black_white_options.getThresholdDefaultRadius());
+            thresholdCoef->setValue(black_white_options.getThresholdDefaultCoef());
+        }
+
     }
 
     colorModeSelector->blockSignals(false);

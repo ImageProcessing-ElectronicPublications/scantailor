@@ -19,7 +19,7 @@
 #ifndef SCANTAILOR_VERSION_H_
 #define SCANTAILOR_VERSION_H_
 
-#define VERSION "0.9.12"
-#define VERSION_QUAD "0.9.12.3" // Must be "x.x.x.x" or an empty string.
+#define VERSION "0.9.13"
+#define VERSION_QUAD "0.9.13.1" // Must be "x.x.x.x" or an empty string.
 
 #endif

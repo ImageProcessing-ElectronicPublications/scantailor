@@ -1665,7 +1665,6 @@ OutputGenerator::binarize(
         int const threshold_delta = black_white_options.getThresholdAdjustment();
         int const threshold_radius = black_white_options.getThresholdRadius();
         double const threshold_coef = black_white_options.getThresholdCoef();
- 
         switch (threshold_method)
         {
         case 0: // Otsu
@@ -1677,20 +1676,21 @@ OutputGenerator::binarize(
         }
         case 1: // Mokji
         {
-            BinaryThreshold const bw_thresh(BinaryThreshold::mokjiThreshold(image, 3, 20));
+            int ta = (int) (threshold_coef * 256.0 + 0.5);
+            BinaryThreshold const bw_thresh(BinaryThreshold::mokjiThreshold(image, threshold_radius, ta));
             binarized = BinaryImage(image, adjustThreshold(bw_thresh));
             break;
         }
         case 2: // Sauvola
         {
             int ws = threshold_radius + 1 + threshold_radius;
-            binarized = binarizeSauvola(image, QSize(201, 201), 0.34, threshold_delta);
+            binarized = binarizeSauvola(image, QSize(ws, ws), threshold_coef, threshold_delta);
             break;
         }
         case 3: // Wolf (Chistian)
         {
             int ws = threshold_radius + 1 + threshold_radius;
-            binarized = binarizeWolf(image, QSize(201, 201), 0.3, threshold_delta);
+            binarized = binarizeWolf(image, QSize(ws, ws), threshold_coef, threshold_delta);
             break;
         }
         }

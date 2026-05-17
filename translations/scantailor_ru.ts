@@ -1280,6 +1280,26 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Pag
         <translation>Выровнять освещение</translation>
     </message>
     <message>
+        <location filename="../filters/output/ui/OutputOptionsWidget.ui" line="219"/>
+        <source>Threshold</source>
+        <translation>Порог</translation>
+    </message>
+    <message>
+        <location filename="../filters/output/ui/OutputOptionsWidget.ui" line="262"/>
+        <source>radius, coef.:</source>
+        <translation>радиус, коеф.:</translation>
+    </message>
+    <message>
+        <location filename="../filters/output/ui/OutputOptionsWidget.ui" line="269"/>
+        <source>Threshold radius.</source>
+        <translation>Радиус порога.</translation>
+    </message>
+    <message>
+        <location filename="../filters/output/ui/OutputOptionsWidget.ui" line="282"/>
+        <source>Threshold coefficient.</source>
+        <translation>Коэффициент порога.</translation>
+    </message>
+    <message>
         <source>Despeckle</source>
         <translation type="obsolete">Удалять пятна</translation>
     </message>

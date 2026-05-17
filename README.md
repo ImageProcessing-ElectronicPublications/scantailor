@@ -1,8 +1,8 @@
 # Scan Tailor - [scantailor.org](http://scantailor.org/)
 
-![ScanTailor logo from scantailor.org](http://scantailor.org/assets/logo_h300-fs8.png)
+![ScanTailor logo from scantailor.org](./resources/appicon.svg)
 
-# This project is no longer maintained, and has not been maintained for a while. 
+## This project is no longer maintained, and has not been maintained for a while. 
 
 
 ## About ##
