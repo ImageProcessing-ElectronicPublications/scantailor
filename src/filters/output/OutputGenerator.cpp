@@ -1187,7 +1187,10 @@ OutputGenerator::processWithDewarping(
 
     if (render_params.binaryOutput())
     {
-        BinaryImage dewarped_bw_content(dewarped_and_maybe_smoothed, bw_threshold);
+        // BinaryImage dewarped_bw_content(dewarped_and_maybe_smoothed, bw_threshold);
+        QPolygonF const full_poly(QRectF(dewarped_and_maybe_smoothed.rect()));
+        BinaryImage dewarped_bw_content(binarize(dewarped_and_maybe_smoothed, full_poly));
+
         dewarped_and_maybe_smoothed = QImage(); // Save memory.
         if (dbg)
         {
@@ -1252,7 +1255,10 @@ OutputGenerator::processWithDewarping(
 
         status.throwIfCancelled();
 
-        BinaryImage dewarped_bw_content(dewarped_and_maybe_smoothed, bw_threshold);
+        // BinaryImage dewarped_bw_content(dewarped_and_maybe_smoothed, bw_threshold);
+        QPolygonF const full_poly(QRectF(dewarped_and_maybe_smoothed.rect()));
+        BinaryImage dewarped_bw_content(binarize(dewarped_and_maybe_smoothed, full_poly));
+
         dewarped_and_maybe_smoothed = QImage(); // Save memory.
         if (dbg)
         {
@@ -1691,6 +1697,24 @@ OutputGenerator::binarize(
         {
             int ws = threshold_radius + 1 + threshold_radius;
             binarized = binarizeWolf(image, QSize(ws, ws), threshold_coef, threshold_delta);
+            break;
+        }
+        case 4: // Window
+        {
+            int ws = threshold_radius + 1 + threshold_radius;
+            binarized = binarizeWindow(image, QSize(ws, ws), threshold_coef, threshold_delta);
+            break;
+        }
+        case 5: // Grad
+        {
+            int ws = threshold_radius + 1 + threshold_radius;
+            binarized = binarizeGrad(image, QSize(ws, ws), threshold_coef, threshold_delta);
+            break;
+        }
+        case 6: // Edgediv
+        {
+            int ws = threshold_radius + 1 + threshold_radius;
+            binarized = binarizeEdgeDiv(image, QSize(ws, ws), threshold_coef, threshold_coef, threshold_delta);
             break;
         }
         }

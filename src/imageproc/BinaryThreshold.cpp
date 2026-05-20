@@ -16,15 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BinaryThreshold.h"
-#include "Grayscale.h"
-#include "Morphology.h"
-#include <QImage>
-#include <QDebug>
-#include <stdexcept>
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <stdexcept>
+#include <QImage>
+#include <QDebug>
+#include "BinaryThreshold.h"
+#include "Grayscale.h"
+#include "Morphology.h"
 
 namespace imageproc
 {
@@ -163,6 +163,23 @@ BinaryThreshold::mokjiThreshold(
     }
 
     return BinaryThreshold(threshold);
+}
+
+BinaryThreshold
+BinaryThreshold::adjustThreshold(
+    BinaryThreshold threshold,
+    int const delta,
+    unsigned char const lower_bound,
+    unsigned char const upper_bound)
+{
+    int const adjusted = threshold + delta;
+    int const lb = lower_bound;
+    int const ub = upper_bound;
+    int const at = qBound(lb, adjusted, ub);
+
+    // Hard-bounding threshold values is necessary for example
+    // if all the content went into the picture mask.
+    return BinaryThreshold(at);
 }
 
 } // namespace imageproc

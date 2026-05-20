@@ -34,7 +34,9 @@ class BinaryImage;
  * N. Otsu (1979). "A threshold selection method from gray-level histograms".
  * http://en.wikipedia.org/wiki/Otsu%27s_method
  */
-BinaryImage binarizeOtsu(QImage const& src);
+BinaryImage binarizeOtsu(
+    QImage const& src,
+    int delta = 0);
 
 /**
  * \brief Image binarization using Mokji's global thresholding method.
@@ -52,7 +54,8 @@ BinaryImage binarizeOtsu(QImage const& src);
 BinaryImage binarizeMokji(
     QImage const& src,
     unsigned max_edge_width = 3,
-    unsigned min_edge_magnitude = 20);
+    unsigned min_edge_magnitude = 20,
+    int delta = 0);
 
 /**
  * \brief Image binarization using Sauvola's local thresholding method.
@@ -87,6 +90,52 @@ BinaryImage binarizeWolf(
     int delta = 0,
     unsigned char lower_bound = 1,
     unsigned char upper_bound = 254);
+
+/**
+ * \brief Image binarization using Dynamic Window based thresholding method.
+ *
+ * Bataineh, B., Abdullah, S. N. H. S., & Omar, K. (2011).
+ * An adaptive local binarization method for document images based
+ * on a novel thresholding method and  dynamic windows.
+ * Pattern Recognition Letters, 32(14), 1805–1813.
+ *
+ * \param src The image to binarize.
+ * \param windowSize The dimensions of a pixel neighborhood to consider.
+ * \param lowerBound The minimum possible gray level that can be made white.
+ * \param upperBound The maximum possible gray level that can be made black.
+ */
+BinaryImage binarizeWindow(
+    QImage const& src,
+    QSize window_size,
+    double coef = 1.0,
+    int delta = 0,
+    unsigned char lower_bound = 1,
+    unsigned char upper_bound = 254);
+
+/**
+ * \brief Image binarization using Grad local/global thresholding method.
+ *
+ * Grad (aka "Gradient snip"), zvezdochiot 2024. "Adaptive/global document image binarization".
+ */
+BinaryImage binarizeGrad(
+    QImage const& src,
+    QSize window_size,
+    double coef = 0.75,
+    int delta = 0,
+    unsigned char lower_bound = 1,
+    unsigned char upper_bound = 254);
+
+/**
+ * \brief Image binarization using EdgeDiv (EdgePlus & BlurDiv) local/global thresholding method.
+ *
+ * EdgeDiv, zvezdochiot 2023. "Adaptive/global document image binarization".
+ */
+BinaryImage binarizeEdgeDiv(
+    QImage const& src,
+    QSize window_size,
+    double coef_ep = 0.0,
+    double coef_db = 0.0,
+    int delta = 0);
 
 } // namespace imageproc
 

@@ -74,6 +74,15 @@ BlackWhiteOptions::getThresholdDefaultRadius() const
     case 3:
         threshold_radius = 100;
         break;
+    case 4:
+        threshold_radius = 50;
+        break;
+    case 5:
+        threshold_radius = 15;
+        break;
+    case 6:
+        threshold_radius = 5;
+        break;
     }
 
     return threshold_radius;
@@ -95,6 +104,13 @@ BlackWhiteOptions::getThresholdDefaultCoef() const
         break;
     case 3:
         threshold_coef = 0.30;
+        break;
+    case 4:
+        threshold_coef = 1.00;
+        break;
+    case 5:
+    case 6:
+        threshold_coef = 0.75;
         break;
     }
 
@@ -149,6 +165,18 @@ BlackWhiteOptions::parseThresholdMethod(QString const& str)
     {
         return 3;
     }
+    else if (str == "window")
+    {
+        return 4;
+    }
+    else if (str == "grad")
+    {
+        return 5;
+    }
+    else if (str == "edgediv")
+    {
+        return 6;
+    }
     else
     {
         return 0; /* default: "otsu" */
@@ -172,6 +200,15 @@ BlackWhiteOptions::formatThresholdMethod(int type)
         break;
     case 3:
         str = "wolf";
+        break;
+    case 4:
+        str = "window";
+        break;
+    case 5:
+        str = "grad";
+        break;
+    case 6:
+        str = "edgediv";
         break;
     }
     return str;

@@ -67,6 +67,12 @@ public:
         unsigned max_edge_width = 3,
         unsigned min_edge_magnitude = 20);
 
+    static BinaryThreshold adjustThreshold(
+        BinaryThreshold threshold,
+        int delta = 0,
+        unsigned char lower_bound = 30,
+        unsigned char upper_bound = 225);
+
     explicit BinaryThreshold(int threshold) : m_threshold(threshold) {}
 
     operator int() const

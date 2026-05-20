@@ -70,6 +70,9 @@ OptionsWidget::OptionsWidget(
     thresholdMethodSelector->addItem(tr("Mokji"), 1);
     thresholdMethodSelector->addItem(tr("Sauvola"), 2);
     thresholdMethodSelector->addItem(tr("Wolf"), 3);
+    thresholdMethodSelector->addItem(tr("Window"), 4);
+    thresholdMethodSelector->addItem(tr("Grad"), 5);
+    thresholdMethodSelector->addItem(tr("EdgeDiv"), 6);
 
     darkerThresholdLink->setText(
         Utils::richTextForLink(darkerThresholdLink->text())
