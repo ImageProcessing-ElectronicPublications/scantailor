@@ -16,23 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <assert.h>
+#include <algorithm>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+#include <Qt>
+#include <QString>
+#include <QMessageBox>
 #include "ProjectOpeningContext.h"
 #include "ProjectOpeningContext.moc"
 #include "FixDpiDialog.h"
 #include "ProjectPages.h"
-#include <QString>
-#include <QMessageBox>
-#include <Qt>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <algorithm>
-#include <assert.h>
 
 ProjectOpeningContext::ProjectOpeningContext(
-    QWidget* parent, QString const& project_file, QDomDocument const& doc)
-    :	m_projectFile(project_file),
-      m_reader(doc),
-      m_pParent(parent)
+    QWidget* parent,
+    QString const& project_file,
+    QDomDocument const& doc)
+    : m_projectFile(project_file)
+    , m_reader(doc, project_file)
+    , m_pParent(parent)
 {
 }
 

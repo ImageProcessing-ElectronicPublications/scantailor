@@ -16,6 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stddef.h>
+#include <assert.h>
+#ifndef Q_MOC_RUN
+#include <boost/bind.hpp>
+#include <boost/foreach.hpp>
+#endif
+#include <QtXml>
+#include <QDir>
+#include <QFile>
+#include <QTextStream>
+#include <QFileInfo>
 #include "ProjectWriter.h"
 #include "ProjectPages.h"
 #include "PageView.h"
@@ -26,25 +37,15 @@
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
 #include "compat/boost_multi_index_foreach_fix.h"
-#include <QtXml>
-#include <QFile>
-#include <QTextStream>
-#include <QFileInfo>
-#ifndef Q_MOC_RUN
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#endif
-#include <stddef.h>
-#include <assert.h>
 
 ProjectWriter::ProjectWriter(
     IntrusivePtr<ProjectPages> const& page_sequence,
     SelectedPage const& selected_page,
     OutputFileNameGenerator const& out_file_name_gen)
-    :	m_pageSequence(page_sequence->toPageSequence(PAGE_VIEW)),
-      m_outFileNameGen(out_file_name_gen),
-      m_selectedPage(selected_page),
-      m_layoutDirection(page_sequence->layoutDirection())
+    : m_pageSequence(page_sequence->toPageSequence(PAGE_VIEW))
+    , m_outFileNameGen(out_file_name_gen)
+    , m_selectedPage(selected_page)
+    , m_layoutDirection(page_sequence->layoutDirection())
 {
     int next_id = 1;
     size_t const num_pages = m_pageSequence.numPages();
@@ -85,19 +86,45 @@ ProjectWriter::~ProjectWriter()
 {
 }
 
-bool
-ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& filters) const
+static QString
+toRelativeIfPossible(
+    QString const& projectDirPath,
+    QString const& absolutePath)
 {
+    if (absolutePath.isEmpty())
+    {
+        return absolutePath;
+    }
+
+    QDir const projectDir(projectDirPath);
+    QString const rel(projectDir.relativeFilePath(absolutePath));
+
+    if (QDir::isAbsolutePath(rel) || rel.startsWith(".."))
+    {
+        return absolutePath;
+    }
+    return rel;
+}
+
+bool
+ProjectWriter::write(
+    QString const& file_path,
+    std::vector<FilterPtr> const& filters) const
+{
+    QString const projectDirPath(QFileInfo(file_path).absolutePath());
     QDomDocument doc;
     QDomElement root_el(doc.createElement("project"));
     doc.appendChild(root_el);
-    root_el.setAttribute("outputDirectory", m_outFileNameGen.outDir());
+    root_el.setAttribute(
+        "outputDirectory",
+        toRelativeIfPossible(projectDirPath, m_outFileNameGen.outDir())
+    );
     root_el.setAttribute(
         "layoutDirection",
         m_layoutDirection == Qt::LeftToRight ? "LTR" : "RTL"
     );
 
-    root_el.appendChild(processDirectories(doc));
+    root_el.appendChild(processDirectories(doc, projectDirPath));
     root_el.appendChild(processFiles(doc));
     root_el.appendChild(processImages(doc));
     root_el.appendChild(processPages(doc));
@@ -129,7 +156,9 @@ ProjectWriter::write(QString const& file_path, std::vector<FilterPtr> const& fil
 }
 
 QDomElement
-ProjectWriter::processDirectories(QDomDocument& doc) const
+ProjectWriter::processDirectories(
+    QDomDocument& doc,
+    QString const& projectDirPath) const
 {
     QDomElement dirs_el(doc.createElement("directories"));
 
@@ -137,7 +166,7 @@ ProjectWriter::processDirectories(QDomDocument& doc) const
     {
         QDomElement dir_el(doc.createElement("directory"));
         dir_el.setAttribute("id", dir.numericId);
-        dir_el.setAttribute("path", dir.path);
+        dir_el.setAttribute("path", toRelativeIfPossible(projectDirPath, dir.path));
         dirs_el.appendChild(dir_el);
     }
 
@@ -189,7 +218,9 @@ ProjectWriter::processImages(QDomDocument& doc) const
 
 void
 ProjectWriter::writeImageMetadata(
-    QDomDocument& doc, QDomElement& image_el, ImageId const& image_id) const
+    QDomDocument& doc,
+    QDomElement& image_el,
+    ImageId const& image_id) const
 {
     MetadataByImage::const_iterator it(m_metadataByImage.find(image_id));
     assert(it != m_metadataByImage.end());
@@ -307,10 +338,10 @@ ProjectWriter::enumPagesImpl(VirtualFunction2<void, PageId const&, int>& out) co
 /*======================== ProjectWriter::Image =========================*/
 
 ProjectWriter::Image::Image(PageInfo const& page, int numeric_id)
-    :	id(page.imageId()),
-      numericId(numeric_id),
-      numSubPages(page.imageSubPages()),
-      leftHalfRemoved(page.leftHalfRemoved()),
-      rightHalfRemoved(page.rightHalfRemoved())
+    : id(page.imageId())
+    , numericId(numeric_id)
+    , numSubPages(page.imageSubPages())
+    , leftHalfRemoved(page.leftHalfRemoved())
+    , rightHalfRemoved(page.rightHalfRemoved())
 {
 }

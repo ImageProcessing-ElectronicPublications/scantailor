@@ -19,17 +19,17 @@
 #ifndef PROJECTREADER_H_
 #define PROJECTREADER_H_
 
+#include <vector>
+#include <map>
+#include <Qt>
+#include <QString>
+#include <QDomDocument>
 #include "ImageId.h"
 #include "PageId.h"
 #include "ImageInfo.h"
 #include "ImageMetadata.h"
 #include "SelectedPage.h"
 #include "IntrusivePtr.h"
-#include <QString>
-#include <QDomDocument>
-#include <Qt>
-#include <vector>
-#include <map>
 
 class QDomElement;
 class ProjectData;
@@ -42,7 +42,7 @@ class ProjectReader
 public:
     typedef IntrusivePtr<AbstractFilter> FilterPtr;
 
-    ProjectReader(QDomDocument const& doc);
+    ProjectReader(QDomDocument const& doc, QString const& projectFilePath = QString());
 
     ~ProjectReader();
 
@@ -112,7 +112,10 @@ private:
 
     ImageInfo getImageInfo(int id) const;
 
+    QString resolvePath(QString const& path) const;
+
     QDomDocument m_doc;
+    QString m_projectDirPath;
     QString m_outDir;
     DirMap m_dirMap;
     FileMap m_fileMap;
