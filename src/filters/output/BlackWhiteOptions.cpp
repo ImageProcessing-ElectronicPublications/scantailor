@@ -28,8 +28,8 @@ BlackWhiteOptions::BlackWhiteOptions()
     : m_thresholdMethod(0)
     , m_thresholdAdjustment(0)
     , m_thresholdManual(false)
-    , m_thresholdRadius(50)
-    , m_thresholdCoef(0.3)
+    , m_thresholdRadius(getThresholdDefaultRadius())
+    , m_thresholdCoef(getThresholdDefaultCoef())
 {
 }
 
@@ -53,9 +53,12 @@ BlackWhiteOptions::toXml(QDomDocument& doc, QString const& name) const
     QDomElement el(doc.createElement(name));
     el.setAttribute("thresholdMethod", formatThresholdMethod(m_thresholdMethod));
     el.setAttribute("thresholdAdj", m_thresholdAdjustment);
-    el.setAttribute("manual", m_thresholdManual ? "1" : "0");
-    el.setAttribute("thresholdRadius", m_thresholdRadius);
-    el.setAttribute("thresholdCoef", m_thresholdCoef);
+    if (m_thresholdManual)
+    {
+        el.setAttribute("manual", "1");
+        el.setAttribute("thresholdRadius", m_thresholdRadius);
+        el.setAttribute("thresholdCoef", m_thresholdCoef);
+    }
     return el;
 }
 
