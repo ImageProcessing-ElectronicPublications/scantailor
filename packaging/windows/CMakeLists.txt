@@ -4,44 +4,44 @@ FIND_PROGRAM(
 )
 IF(NOT MAKENSIS_EXE)
     MESSAGE(
-    	FATAL_ERROR
-    	"makensis.exe could not be found.\n"
-    	"makensis.exe is a part of NSIS. Get NSIS from http://nsis.sf.net/"
+        FATAL_ERROR
+        "makensis.exe could not be found.\n"
+        "makensis.exe is a part of NSIS. Get NSIS from http://nsis.sf.net/"
     )
 ENDIF(NOT MAKENSIS_EXE)
     
 IF(MSVC)
     GET_FILENAME_COMPONENT(make_program_dir "${CMAKE_MAKE_PROGRAM}" PATH)
     FIND_FILE(
-    	VC_REDIST_DIR VC/redist PATHS "${make_program_dir}"
-    	PATH_SUFFIXES .. ../.. DOC "VC/redist directory."
+        VC_REDIST_DIR VC/redist PATHS "${make_program_dir}"
+        PATH_SUFFIXES .. ../.. DOC "VC/redist directory."
     )
     IF(VC_REDIST_DIR)
-    	# Get rid of .. components in the path.
-    	GET_FILENAME_COMPONENT(VC_REDIST_DIR "${VC_REDIST_DIR}" ABSOLUTE)
-    	SET(VC_REDIST_DIR "${VC_REDIST_DIR}" CACHE PATH "VC/redist directory." FORCE)
+        # Get rid of .. components in the path.
+        GET_FILENAME_COMPONENT(VC_REDIST_DIR "${VC_REDIST_DIR}" ABSOLUTE)
+        SET(VC_REDIST_DIR "${VC_REDIST_DIR}" CACHE PATH "VC/redist directory." FORCE)
 
-    	# Find CRT redistributables.
-    	FILE(GLOB crt_redist_dirs "${VC_REDIST_DIR}/x86/Microsoft.VC*.CRT")
-    	IF(crt_redist_dirs)
-    		LIST(GET crt_redist_dirs 0 CRT_REDIST_PATH)
-    	ENDIF(crt_redist_dirs)
+        # Find CRT redistributables.
+        FILE(GLOB crt_redist_dirs "${VC_REDIST_DIR}/x86/Microsoft.VC*.CRT")
+        IF(crt_redist_dirs)
+            LIST(GET crt_redist_dirs 0 CRT_REDIST_PATH)
+        ENDIF(crt_redist_dirs)
     ENDIF(VC_REDIST_DIR)
 
     IF (NOT CRT_REDIST_PATH)
-    	MESSAGE(
-    		FATAL_ERROR
-    		"Could not find Visual Studio redistributables.\n"
-    		"They are typically located in a directory like:\n"
-    		"C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\n"
-    		"Please set VC_REDIST_DIR accordinally.\n"
-    		"Specifically, we are after redist\x86\Microsoft.VC*.CRT"
-    	)
+        MESSAGE(
+            FATAL_ERROR
+            "Could not find Visual Studio redistributables.\n"
+            "They are typically located in a directory like:\n"
+            "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\n"
+            "Please set VC_REDIST_DIR accordinally.\n"
+            "Specifically, we are after redist\x86\Microsoft.VC*.CRT"
+        )
     ENDIF(NOT CRT_REDIST_PATH)
 ENDIF()
 
 MATH(EXPR bits "${CMAKE_SIZEOF_VOID_P} * 8")
-SET(LICENSE_FILE "${CMAKE_SOURCE_DIR}/GPL3.txt")
+SET(LICENSE_FILE "${CMAKE_SOURCE_DIR}/LICENSE")
 SET(INSTALLER_FILENAME "scantailor-${VERSION}-${bits}bit-install.exe")
 SET(REGISTER_EXTENSION_NSH "${CMAKE_CURRENT_SOURCE_DIR}/registerExtension.nsh")
 
@@ -94,18 +94,18 @@ SET(DUMP_SYMBOLS_COMMANDS "")
 IF(ENABLE_CRASH_REPORTER)
     LIST(APPEND extra_deps CrashReporter)
     SET(
-    	DUMP_SYMBOLS_COMMANDS
-    	COMMAND "${CMAKE_COMMAND}" ARGS -E echo "Dumping symbols..."
-    	
-    	COMMAND "${DUMP_SYMS_EXECUTABLE}" ARGS "$<TARGET_FILE:scantailor>"
-    	">" "${SYMBOLS_PATH}/temp.sym"
-    	COMMAND "${CMAKE_COMMAND}" ARGS "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
-    	-P "${CMAKE_SOURCE_DIR}/cmake/move_sym_file.cmake"
-    	
-    	COMMAND "${DUMP_SYMS_EXECUTABLE}" ARGS "$<TARGET_FILE:scantailor-cli>"
-    	">" "${SYMBOLS_PATH}/temp.sym"
-    	COMMAND "${CMAKE_COMMAND}" ARGS "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
-    	-P "${CMAKE_SOURCE_DIR}/cmake/move_sym_file.cmake"
+        DUMP_SYMBOLS_COMMANDS
+        COMMAND "${CMAKE_COMMAND}" ARGS -E echo "Dumping symbols..."
+        
+        COMMAND "${DUMP_SYMS_EXECUTABLE}" ARGS "$<TARGET_FILE:scantailor>"
+        ">" "${SYMBOLS_PATH}/temp.sym"
+        COMMAND "${CMAKE_COMMAND}" ARGS "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
+        -P "${CMAKE_SOURCE_DIR}/cmake/move_sym_file.cmake"
+        
+        COMMAND "${DUMP_SYMS_EXECUTABLE}" ARGS "$<TARGET_FILE:scantailor-cli>"
+        ">" "${SYMBOLS_PATH}/temp.sym"
+        COMMAND "${CMAKE_COMMAND}" ARGS "-DSYMBOLS_PATH=${SYMBOLS_PATH}"
+        -P "${CMAKE_SOURCE_DIR}/cmake/move_sym_file.cmake"
     )
 ENDIF(ENABLE_CRASH_REPORTER)
 
@@ -121,8 +121,8 @@ SET(
 )
 IF(ENABLE_CRASH_REPORTER)
     LIST(
-    	APPEND scantailor_nsi_command
-    	"-DCRASHREPORTER_EXE=$<TARGET_FILE:CrashReporter>"
+        APPEND scantailor_nsi_command
+        "-DCRASHREPORTER_EXE=$<TARGET_FILE:CrashReporter>"
     )
 ENDIF()
 LIST(
