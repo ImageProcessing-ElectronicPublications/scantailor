@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BlackWhiteOptions.h"
 #include <QDomDocument>
 #include <QDomElement>
 #include <QString>
+#include "BlackWhiteOptions.h"
 
 namespace output
 {
 
 BlackWhiteOptions::BlackWhiteOptions()
-    : m_thresholdMethod(0)
+    : m_thresholdMethod(T_OTSU)
     , m_thresholdAdjustment(0)
     , m_thresholdManual(false)
     , m_thresholdRadius(getThresholdDefaultRadius())
@@ -68,22 +68,22 @@ BlackWhiteOptions::getThresholdDefaultRadius() const
     int threshold_radius = 1;
     switch (m_thresholdMethod)
     {
-    case 0:
+    case T_OTSU:
         break;
-    case 1:
+    case T_MOKJI:
         threshold_radius = 3;
         break;
-    case 2:
-    case 3:
+    case T_SAUVOLA:
+    case T_WOLF:
         threshold_radius = 100;
         break;
-    case 4:
+    case T_WINDOW:
         threshold_radius = 50;
         break;
-    case 5:
+    case T_GRAD:
         threshold_radius = 15;
         break;
-    case 6:
+    case T_EDGEDIV:
         threshold_radius = 5;
         break;
     }
@@ -97,22 +97,22 @@ BlackWhiteOptions::getThresholdDefaultCoef() const
     double threshold_coef = 0.01;
     switch (m_thresholdMethod)
     {
-    case 0:
+    case T_OTSU:
         break;
-    case 1:
+    case T_MOKJI:
         threshold_coef = 0.08;
         break;
-    case 2:
+    case T_SAUVOLA:
         threshold_coef = 0.34;
         break;
-    case 3:
+    case T_WOLF:
         threshold_coef = 0.30;
         break;
-    case 4:
+    case T_WINDOW:
         threshold_coef = 1.00;
         break;
-    case 5:
-    case 6:
+    case T_GRAD:
+    case T_EDGEDIV:
         threshold_coef = 0.75;
         break;
     }
@@ -153,64 +153,64 @@ BlackWhiteOptions::operator!=(BlackWhiteOptions const& other) const
     return !(*this == other);
 }
 
-int
+ThresholdFilter
 BlackWhiteOptions::parseThresholdMethod(QString const& str)
 {
     if (str == "mokji")
     {
-        return 1;
+        return T_MOKJI;
     }
     else if (str == "sauvola")
     {
-        return 2;
+        return T_SAUVOLA;
     }
     else if (str == "wolf")
     {
-        return 3;
+        return T_WOLF;
     }
     else if (str == "window")
     {
-        return 4;
+        return T_WINDOW;
     }
     else if (str == "grad")
     {
-        return 5;
+        return T_GRAD;
     }
     else if (str == "edgediv")
     {
-        return 6;
+        return T_EDGEDIV;
     }
     else
     {
-        return 0; /* default: "otsu" */
+        return T_OTSU; /* default: "otsu" */
     }
 }
 
 QString
-BlackWhiteOptions::formatThresholdMethod(int type)
+BlackWhiteOptions::formatThresholdMethod(ThresholdFilter type)
 {
     QString str = "";
     switch (type)
     {
-    case 0:
+    case T_OTSU:
         str = "otsu";
         break;
-    case 1:
+    case T_MOKJI:
         str = "mokji";
         break;
-    case 2:
+    case T_SAUVOLA:
         str = "sauvola";
         break;
-    case 3:
+    case T_WOLF:
         str = "wolf";
         break;
-    case 4:
+    case T_WINDOW:
         str = "window";
         break;
-    case 5:
+    case T_GRAD:
         str = "grad";
         break;
-    case 6:
+    case T_EDGEDIV:
         str = "edgediv";
         break;
     }

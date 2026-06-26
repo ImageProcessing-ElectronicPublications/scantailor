@@ -16,8 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "FixDpiDialog.h"
-#include "FixDpiDialog.moc"
+#include <assert.h>
+#include <vector>
+#include <algorithm>
+#ifndef Q_MOC_RUN
+#include <boost/foreach.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+#endif
+#include <Qt>
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 #include <QModelIndex>
@@ -28,16 +35,9 @@
 #include <QSize>
 #include <QString>
 #include <QColor>
-#include <Qt>
 #include <QDebug>
-#ifndef Q_MOC_RUN
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#endif
-#include <vector>
-#include <algorithm>
-#include <assert.h>
+#include "FixDpiDialog.h"
+#include "FixDpiDialog.moc"
 
 // To be able to use it in QVariant
 Q_DECLARE_METATYPE(ImageMetadata)
@@ -275,6 +275,8 @@ FixDpiDialog::FixDpiDialog(std::vector<ImageFileInfo> const& files, QWidget* par
     dpiCombo->addItem("300 x 300", QSize(300, 300));
     dpiCombo->addItem("400 x 400", QSize(400, 400));
     dpiCombo->addItem("600 x 600", QSize(600, 600));
+    dpiCombo->addItem("1200 x 1200", QSize(1200, 1200));
+    dpiCombo->addItem("2400 x 2400", QSize(2400, 2400));
 
     tabWidget->setTabText(NEED_FIXING_TAB, tr("Need Fixing"));
     tabWidget->setTabText(ALL_PAGES_TAB, tr("All Pages"));

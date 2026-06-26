@@ -19,13 +19,13 @@
 #ifndef OUTPUT_CHANGEDPIDIALOG_H_
 #define OUTPUT_CHANGEDPIDIALOG_H_
 
+#include <set>
+#include <QDialog>
+#include <QString>
 #include "ui_OutputChangeDpiDialog.h"
 #include "PageId.h"
 #include "PageSequence.h"
 #include "IntrusivePtr.h"
-#include <QDialog>
-#include <QString>
-#include <set>
 
 class PageSelectionAccessor;
 class QButtonGroup;
@@ -39,7 +39,9 @@ class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog
     Q_OBJECT
 public:
     ChangeDpiDialog(
-        QWidget* parent, Dpi const& dpi, PageId const& cur_page,
+        QWidget* parent,
+        Dpi const& dpi,
+        PageId const& cur_page,
         PageSelectionAccessor const& page_selection_accessor);
 
     virtual ~ChangeDpiDialog();

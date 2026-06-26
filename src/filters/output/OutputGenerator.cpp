@@ -28,6 +28,7 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #endif
+#include <Qt>
 #include <QImage>
 #include <QSize>
 #include <QPoint>
@@ -42,7 +43,6 @@
 #include <QBrush>
 #include <QtGlobal>
 #include <QDebug>
-#include <Qt>
 #include "config.h"
 #include "OutputGenerator.h"
 #include "ImageTransformation.h"
@@ -1581,28 +1581,9 @@ OutputGenerator::smoothToGrayscale(
     Dpi const& dpi)
 {
     int const min_dpi = std::min(dpi.horizontal(), dpi.vertical());
-    int window;
-    int degree;
-    if (min_dpi <= 200)
-    {
-        window = 5;
-        degree = 3;
-    }
-    else if (min_dpi <= 400)
-    {
-        window = 7;
-        degree = 4;
-    }
-    else if (min_dpi <= 800)
-    {
-        window = 11;
-        degree = 4;
-    }
-    else
-    {
-        window = 11;
-        degree = 2;
-    }
+    int const window = (int) (3.85 + 0.012 * min_dpi);
+    int const degree = (int) (3.25 + 0.00184 * min_dpi);
+
     return savGolFilter(src, QSize(window, window), degree, degree);
 }
 
@@ -1667,51 +1648,51 @@ OutputGenerator::binarize(
     }
     else
     {
-        int const threshold_method = black_white_options.getThresholdMethod();
+        ThresholdFilter const threshold_method = black_white_options.getThresholdMethod();
         int const threshold_delta = black_white_options.getThresholdAdjustment();
         int const threshold_radius = black_white_options.getThresholdRadius();
         double const threshold_coef = black_white_options.getThresholdCoef();
         switch (threshold_method)
         {
-        case 0: // Otsu
+        case T_OTSU:
         {
             GrayscaleHistogram hist(image, mask);
             BinaryThreshold const bw_thresh(BinaryThreshold::otsuThreshold(hist));
             binarized = BinaryImage(image, adjustThreshold(bw_thresh));
             break;
         }
-        case 1: // Mokji
+        case T_MOKJI:
         {
             int ta = (int) (threshold_coef * 256.0 + 0.5);
             BinaryThreshold const bw_thresh(BinaryThreshold::mokjiThreshold(image, threshold_radius, ta));
             binarized = BinaryImage(image, adjustThreshold(bw_thresh));
             break;
         }
-        case 2: // Sauvola
+        case T_SAUVOLA:
         {
             int ws = threshold_radius + 1 + threshold_radius;
             binarized = binarizeSauvola(image, QSize(ws, ws), threshold_coef, threshold_delta);
             break;
         }
-        case 3: // Wolf (Chistian)
+        case T_WOLF:
         {
             int ws = threshold_radius + 1 + threshold_radius;
             binarized = binarizeWolf(image, QSize(ws, ws), threshold_coef, threshold_delta);
             break;
         }
-        case 4: // Window
+        case T_WINDOW:
         {
             int ws = threshold_radius + 1 + threshold_radius;
             binarized = binarizeWindow(image, QSize(ws, ws), threshold_coef, threshold_delta);
             break;
         }
-        case 5: // Grad
+        case T_GRAD:
         {
             int ws = threshold_radius + 1 + threshold_radius;
             binarized = binarizeGrad(image, QSize(ws, ws), threshold_coef, threshold_delta);
             break;
         }
-        case 6: // Edgediv
+        case T_EDGEDIV:
         {
             int ws = threshold_radius + 1 + threshold_radius;
             binarized = binarizeEdgeDiv(image, QSize(ws, ws), threshold_coef, threshold_coef, threshold_delta);

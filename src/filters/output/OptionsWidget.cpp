@@ -16,6 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <Qt>
+#include <QtGlobal>
+#include <QVariant>
+#include <QColorDialog>
+#include <QToolTip>
+#include <QString>
+#include <QCursor>
+#include <QPoint>
+#include <QSize>
+#include <QDebug>
+#ifndef Q_MOC_RUN
+#include <boost/foreach.hpp>
+#endif
 #include "OptionsWidget.h"
 #include "OptionsWidget.moc"
 #include "ChangeDpiDialog.h"
@@ -31,19 +44,6 @@
 #include "../../Utils.h"
 #include "ScopedIncDec.h"
 #include "config.h"
-#ifndef Q_MOC_RUN
-#include <boost/foreach.hpp>
-#endif
-#include <QtGlobal>
-#include <QVariant>
-#include <QColorDialog>
-#include <QToolTip>
-#include <QString>
-#include <QCursor>
-#include <QPoint>
-#include <QSize>
-#include <Qt>
-#include <QDebug>
 
 namespace output
 {
@@ -51,11 +51,11 @@ namespace output
 OptionsWidget::OptionsWidget(
     IntrusivePtr<Settings> const& settings,
     PageSelectionAccessor const& page_selection_accessor)
-    :   m_ptrSettings(settings),
-      m_pageSelectionAccessor(page_selection_accessor),
-      m_despeckleLevel(DESPECKLE_NORMAL),
-      m_lastTab(TAB_OUTPUT),
-      m_ignoreThresholdChanges(0)
+    : m_ptrSettings(settings)
+    , m_pageSelectionAccessor(page_selection_accessor)
+    , m_despeckleLevel(DESPECKLE_NORMAL)
+    , m_lastTab(TAB_OUTPUT)
+    , m_ignoreThresholdChanges(0)
 {
     setupUi(this);
 
@@ -66,13 +66,13 @@ OptionsWidget::OptionsWidget(
     colorModeSelector->addItem(tr("Color / Grayscale"), ColorParams::COLOR_GRAYSCALE);
     colorModeSelector->addItem(tr("Mixed"), ColorParams::MIXED);
 
-    thresholdMethodSelector->addItem(tr("Otsu"), 0);
-    thresholdMethodSelector->addItem(tr("Mokji"), 1);
-    thresholdMethodSelector->addItem(tr("Sauvola"), 2);
-    thresholdMethodSelector->addItem(tr("Wolf"), 3);
-    thresholdMethodSelector->addItem(tr("Window"), 4);
-    thresholdMethodSelector->addItem(tr("Grad"), 5);
-    thresholdMethodSelector->addItem(tr("EdgeDiv"), 6);
+    thresholdMethodSelector->addItem(tr("Otsu"), T_OTSU);
+    thresholdMethodSelector->addItem(tr("Mokji"), T_MOKJI);
+    thresholdMethodSelector->addItem(tr("Sauvola"), T_SAUVOLA);
+    thresholdMethodSelector->addItem(tr("Wolf"), T_WOLF);
+    thresholdMethodSelector->addItem(tr("Window"), T_WINDOW);
+    thresholdMethodSelector->addItem(tr("Grad"), T_GRAD);
+    thresholdMethodSelector->addItem(tr("EdgeDiv"), T_EDGEDIV);
 
     darkerThresholdLink->setText(
         Utils::richTextForLink(darkerThresholdLink->text())
@@ -245,7 +245,7 @@ OptionsWidget::colorModeChanged(int const idx)
 void
 OptionsWidget::thresholdMethodChanged(int const idx)
 {
-    int const method = thresholdMethodSelector->itemData(idx).toInt();
+    ThresholdFilter const method = (ThresholdFilter) thresholdMethodSelector->itemData(idx).toInt();
     BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
 
     if (opt.getThresholdMethod() == method)

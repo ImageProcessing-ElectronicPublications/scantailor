@@ -16,6 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stddef.h>
+#include <stdint.h>
+#include <assert.h>
+#include <vector>
+#include <map>
+#include <limits>
+#include <algorithm>
+#ifndef Q_MOC_RUN
+#include <boost/foreach.hpp>
+#endif
+#include <QtGlobal>
+#include <QImage>
+#include <QDebug>
 #include "Despeckle.h"
 #include "TaskStatus.h"
 #include "DebugImages.h"
@@ -24,19 +37,6 @@
 #include "imageproc/BinaryImage.h"
 #include "imageproc/ConnectivityMap.h"
 #include "imageproc/Connectivity.h"
-#ifndef Q_MOC_RUN
-#include <boost/foreach.hpp>
-#endif
-#include <QtGlobal>
-#include <QImage>
-#include <QDebug>
-#include <vector>
-#include <map>
-#include <limits>
-#include <algorithm>
-#include <stddef.h>
-#include <stdint.h>
-#include <assert.h>
 
 /**
  * \file
@@ -104,32 +104,28 @@ Settings::get(Despeckle::Level const level, Dpi const& dpi)
     double const dpi_factor = min_dpi / 300.0;
 
     // To silence compiler's warnings.
-    settings.minRelativeParentWeight = 0;
-    settings.pixelsToSqDist = 0;
-    settings.bigObjectThreshold = 0;
+    unsigned int despeckle_factor = 0;
 
     switch (level)
     {
     case Despeckle::CAUTIOUS:
-        settings.minRelativeParentWeight = 0.125 * dpi_factor;
-        settings.pixelsToSqDist = 10.0*10.0;
-        settings.bigObjectThreshold = qRound(7 * dpi_factor);
+        despeckle_factor = 67; /* minRelativeParentWeight = 0.125 * dpi_factor(?), pixelsToSqDist = 10*10, bigObjectThreshold = 7 * dpi_factor */
         break;
     case Despeckle::NORMAL:
-        settings.minRelativeParentWeight = 0.175 * dpi_factor;
-        settings.pixelsToSqDist = 6.5*6.5;
-        settings.bigObjectThreshold = qRound(12 * dpi_factor);
+        despeckle_factor = 100; /* minRelativeParentWeight = 0.175 * dpi_factor(?), pixelsToSqDist = 6.5*6.5, bigObjectThreshold = 12 * dpi_factor */
         break;
     case Despeckle::AGGRESSIVE:
-        settings.minRelativeParentWeight = 0.225 * dpi_factor;
-        settings.pixelsToSqDist = 3.5*3.5;
-        settings.bigObjectThreshold = qRound(17 * dpi_factor);
+        despeckle_factor = 150; /* minRelativeParentWeight = 0.225 * dpi_factor(?), pixelsToSqDist = 3.5*3.5, bigObjectThreshold = 17 * dpi_factor */
         break;
     }
+    double const size_factor = 0.13457 + 0.00265 * despeckle_factor;
+    double const dist_factor = 1.0 / (size_factor * size_factor);
+    settings.minRelativeParentWeight = 0.0016 * despeckle_factor;
+    settings.pixelsToSqDist = dist_factor * dist_factor;
+    settings.bigObjectThreshold = qRound(0.114 * despeckle_factor * dpi_factor);
 
     return settings;
 }
-
 
 struct Component
 {

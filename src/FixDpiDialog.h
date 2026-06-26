@@ -19,17 +19,17 @@
 #ifndef FIXDPIDIALOG_H_
 #define FIXDPIDIALOG_H_
 
-#include "ui_FixDpiDialog.h"
-#include "ImageFileInfo.h"
-#include "ImageMetadata.h"
-#include "Dpi.h"
+#include <vector>
+#include <memory>
 #include <QDialog>
 #include <QString>
 #include <QItemSelection>
 #include <QPalette>
 #include <QSize>
-#include <vector>
-#include <memory>
+#include "ui_FixDpiDialog.h"
+#include "ImageFileInfo.h"
+#include "ImageMetadata.h"
+#include "Dpi.h"
 
 class QItemSelection;
 

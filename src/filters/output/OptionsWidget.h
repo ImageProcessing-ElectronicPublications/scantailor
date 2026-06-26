@@ -19,6 +19,7 @@
 #ifndef OUTPUT_OPTIONSWIDGET_H_
 #define OUTPUT_OPTIONSWIDGET_H_
 
+#include <set>
 #include "ui_OutputOptionsWidget.h"
 #include "FilterOptionsWidget.h"
 #include "IntrusivePtr.h"
@@ -30,7 +31,6 @@
 #include "DespeckleLevel.h"
 #include "Dpi.h"
 #include "ImageViewTab.h"
-#include <set>
 
 namespace dewarping
 {

@@ -16,32 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ChangeDpiDialog.h"
-#include "ChangeDpiDialog.moc"
-#include "PageSelectionAccessor.h"
-#include "Dpi.h"
+#include <algorithm>
+#ifndef Q_MOC_RUN
+#include <boost/foreach.hpp>
+#endif
 #include <QButtonGroup>
 #include <QVariant>
 #include <QIntValidator>
 #include <QMessageBox>
 #include <QLineEdit>
 #include <QDebug>
-#ifndef Q_MOC_RUN
-#include <boost/foreach.hpp>
-#endif
-#include <algorithm>
+#include "ChangeDpiDialog.h"
+#include "ChangeDpiDialog.moc"
+#include "PageSelectionAccessor.h"
+#include "Dpi.h"
 
 namespace output
 {
 
 ChangeDpiDialog::ChangeDpiDialog(
-    QWidget* parent, Dpi const& dpi, PageId const& cur_page,
+    QWidget* parent,
+	Dpi const& dpi,
+	PageId const& cur_page,
     PageSelectionAccessor const& page_selection_accessor)
-    :	QDialog(parent),
-      m_pages(page_selection_accessor.allPages()),
-      m_selectedPages(page_selection_accessor.selectedPages()),
-      m_curPage(cur_page),
-      m_pScopeGroup(new QButtonGroup(this))
+    : QDialog(parent)
+    , m_pages(page_selection_accessor.allPages())
+    , m_selectedPages(page_selection_accessor.selectedPages())
+    , m_curPage(cur_page)
+    , m_pScopeGroup(new QButtonGroup(this))
 {
     setupUi(this);
     m_pScopeGroup->addButton(thisPageRB);
@@ -57,7 +59,7 @@ ChangeDpiDialog::ChangeDpiDialog(
 
     static int const common_dpis[] =
     {
-        300, 400, 600
+        300, 400, 600, 1200, 2400
     };
 
     int const requested_dpi = std::max(dpi.horizontal(), dpi.vertical());
@@ -156,7 +158,7 @@ ChangeDpiDialog::onSubmit()
         return;
     }
 
-    if (dpi > 1200)
+    if (dpi > 4800)
     {
         QMessageBox::warning(
             this, tr("Error"),
